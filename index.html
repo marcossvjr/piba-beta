@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PIBA • Discipulados </title>
+<style>
+  :root{
+    --bg1: #FAEEDB;
+    --bg2: #B3AB80;
+    --bg3: #1C5B48;
+    --panel: #184e3e;
+    --muted: #949db2;
+    --text: #ffffff;
+    --accent: #B2CB3C;
+    --ok: #22c55e;
+    --warn: #ef4444;
+    --line: #FAEEDB;
+    --chip: #FAEEDB;
+    --focus: 0 0 0 3px rgb(178 203 60 / 75%);
+    --radius: 8px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:linear-gradient(180deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+    color:var(--text); font:16px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    min-height:100dvh;
+  }
+  header{
+    position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.4) blur(8px);
+    background:rgba(15,17,21,.7); border-bottom:1px solid var(--line);
+  }
+  .wrap{max-width:1200px; margin:0 auto; padding:18px 20px;}
+  .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px}
+  .brand .dot{width:11px; height:11px; background:conic-gradient(from 210deg, #7c5cff, #5cc8ff, #7c5cff); border-radius:50%}
+  .brand small{color:var(--muted); font-weight:500}
+  main .controls{
+    display:grid; grid-template-columns: 1fr auto; gap:14px; align-items:stretch; margin-top:16px;
+  }
+  .toolbar{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:14px; border:1px solid var(--line);
+    border-radius:var(--radius); background:var(--panel);
+  }
+  .toolbar input[type="search"]{
+    flex:1 1 240px; min-width:200px;
+  }
+  input, select, button, textarea{
+    background: var(--bg2); border:1px solid var(--line); color:var(--text);
+    border-radius:10px; padding:10px 12px; outline:none;
+  }
+  input::placeholder{color:#6e7890}
+  input:focus, select:focus, textarea:focus{box-shadow:var(--focus); border-color:#3d4251}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; letter-spacing:.2px; cursor:pointer}
+  .btn.primary{background:var(--accent); border-color:transparent}
+  .btn.ghost{background:transparent}
+  .btn.ok{background:rgba(34,197,94,.14); border-color: var(--focus);}
+  .btn.warn{background:rgba(239,68,68,.12); border-color:#5e2323}
+  .btn:disabled{opacity:.6; cursor:not-allowed}
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{background:var(--chip); color:#aeb6cb; border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:14px}
+  .grid{
+    display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:18px;
+  }
+  .card{
+    grid-column:span 3; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px;
+  }
+  .card h3{margin:0 0 6px 0; font-size:14px; color:#a7b0c7; font-weight:600}
+  .card .num{font-weight:800; font-size:26px; letter-spacing:.4px}
+  .table-card{
+    grid-column:1 / -1; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden
+  }
+  table{width:100%; border-collapse:collapse}
+  thead th{
+    text-align:left; font-size:14px; color:#9aa4bc; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
+    background:var(--panel); position:sticky; top:68px; z-index:5; border-bottom:1px solid var(--line);
+    white-space: nowrap;
+  }
+  th, td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+  tbody tr:hover{background:#111621}
+  .nowrap{white-space:nowrap}
+  .muted{color:var(--muted)}
+  .stack{display:flex; flex-direction:column; gap:4px}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .grow{flex:1}
+  .right{margin-left:auto}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  .w-120{width:120px}
+  .w-160{width:160px}
+  .w-200{width:200px}
+  .tag{padding:4px 8px; border-radius:999px; font-size:14px; border:1px solid var(--line); background: var(--bg2);}
+  .tag.m{border-color:#2d3a73}
+  .tag.f{border-color:#73305b}
+  .tag.o{border-color:#3a7360}
+  /* Modal */
+  dialog{
+    width:min(920px, 96vw); border:1px solid var(--line); border-radius:16px; padding:0; background:var(--panel); color:var(--text)
+  }
+  dialog::backdrop{background:rgba(0,0,0,.6)}
+  .modal-header{display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--line)}
+  .modal-body{padding:16px 18px}
+  .grid-form{display:grid; grid-template-columns: repeat(12, 1fr); gap:12px}
+  .grid-form .col-12{grid-column:span 12}
+  .grid-form .col-6{grid-column:span 6}
+  .grid-form .col-4{grid-column:span 4}
+  .grid-form .col-3{grid-column:span 3}
+  label{display:block; font-size:14px; color:#9aa4bc; margin:0 0 6px 2px}
+  .help{font-size:14px; color:#93a0bf}
+  .danger{color:#ffb4b4}
+  .footer{display:flex; gap:10px; justify-content:flex-end; padding:14px 18px; border-top:1px solid var(--line); background:#10141c}
+  /* Responsive tweaks */
+  @media (max-width: 960px){
+    .card{grid-column:span 6}
+  }
+  @media (max-width: 640px){
+    .grid{gap:10px}
+    .card{grid-column:span 12}
+    .toolbar{padding:10px}
+    thead th{position:static}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap row">
+      <div class="brand"><span class="dot"></span> PIBA • Discipulados <small></small></div>
+      <div class="right row">
+        <button id="btnAdd" class="btn primary">+ Nova pessoa</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="controls">
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone…" />
+        <select id="filterOrigem" class="w-200">
+          <option value="">Todas as origens</option>
+        </select>
+        <input id="filterDiscipulador" class="w-160" type="text" placeholder="Filtrar discipulador" />
+        <select id="filterSexo" class="w-120">
+          <option value="">Sexo (todos)</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Outro</option>
+        </select>
+        <button id="btnClearFilters" class="btn ghost">Limpar filtros</button>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <input id="importFile" type="file" accept=".json" class="w-200" />
+        <button id="btnImport" class="btn">Importar JSON</button>
+        <button id="btnExport" class="btn ok">Exportar JSON</button>
+        <button id="btnSeed" class="btn ghost" title="Inserir alguns dados de exemplo">Gerar exemplos</button>
+        <button id="btnWipe" class="btn warn" title="Apagar tudo">Apagar tudo</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h3>Total de pessoas</h3>
+        <div class="num" id="kpiTotal">0</div>
+        <div class="chips" id="chipsOrigens"></div>
+      </div>
+      <div class="card">
+        <h3>Por sexo</h3>
+        <div class="row" style="margin-top:6px">
+          <span class="tag m">Masc: <b id="kpiMasc">0</b></span>
+          <span class="tag f">Fem: <b id="kpiFem">0</b></span>
+          <span class="tag o">Outro: <b id="kpiOut">0</b></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Com WhatsApp</h3>
+        <div class="num" id="kpiWpp">0</div>
+        <div class="help">Telefones com 11+ dígitos</div>
+      </div>
+      <div class="card">
+        <h3>Iniciados (últimos 30 dias)</h3>
+        <div class="num" id="kpi30">0</div>
+      </div>
+
+      <div class="table-card">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th data-sort="nome" class="sortable">Nome</th>
+              <th class="w-120">Sexo</th>
+              <th class="w-120">Idade</th>
+              <th>Endereço</th>
+              <th class="w-160">Telefone</th>
+              <th>E-mail</th>
+              <th class="w-160">Origem</th>
+              <th class="w-160">Discipulador</th>
+              <th class="w-160 nowrap" data-sort="dataInicio">Início</th>
+              <th class="w-160">Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <dialog id="dlg">
+    <form method="dialog" id="frm">
+      <div class="modal-header">
+        <strong id="dlgTitle">Nova pessoa</strong>
+        <button value="close" class="btn ghost" type="button" id="btnClose">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-form">
+          <div class="col-6">
+            <label for="fNome">Nome</label>
+            <input id="fNome" required placeholder="Nome completo" />
+          </div>
+          <div class="col-3">
+            <label for="fSexo">Sexo</label>
+            <select id="fSexo" required>
+              <option value="">Selecione…</option>
+              <option>Masculino</option>
+              <option>Feminino</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="fIdade">Idade</label>
+            <input id="fIdade" type="number" min="0" max="120" placeholder="Ex: 32" />
+          </div>
+
+          <div class="col-12">
+            <label for="fEndereco">Endereço</label>
+            <input id="fEndereco" placeholder="Rua, nº, bairro, cidade" />
+          </div>
+
+          <div class="col-4">
+            <label for="fTelefone">Telefone (WhatsApp)</label>
+            <input id="fTelefone" placeholder="(DDD) 9XXXX-XXXX" />
+          </div>
+          <div class="col-4">
+            <label for="fEmail">E-mail</label>
+            <input id="fEmail" type="email" placeholder="email@exemplo.com" />
+          </div>
+          <div class="col-4">
+            <label for="fOrigem">Origem</label>
+            <select id="fOrigem" required></select>
+          </div>
+
+          <div class="col-6">
+            <label for="fDiscipulador">Discipulador</label>
+            <input id="fDiscipulador" placeholder="Nome do discipulador" />
+          </div>
+          <div class="col-6">
+            <label for="fDataInicio">Data do início do acompanhamento</label>
+            <input id="fDataInicio" type="date" required />
+          </div>
+
+          <div class="col-12">
+            <div class="help">Os dados são salvos no seu navegador (LocalStorage). Para migrar, use Exportar/Importar JSON.</div>
+            <div class="help danger" id="errors" style="display:none; margin-top:6px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn ghost" value="cancel" type="button" id="btnCancel">Cancelar</button>
+        <button class="btn primary" id="btnSave" type="submit">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+<script>
+/* ===== Configurações ===== */
+const STORAGE_KEY = "dashboard_pessoas_v1";
+const ORIGENS = [
+  "Indicação de amigo(a)",
+  "Conversão",
+  "Transferência de igreja/congregação",
+  "Evangelismo de rua",
+  "Mídias sociais",
+  "Evento/Conferência",
+  "Visita domiciliar",
+  "Projeto social",
+  "Culto online",
+  "Outros"
+];
+
+/* ===== Estado ===== */
+let pessoas = [];
+let sort = { field: "nome", dir: "asc" };
+let editingId = null;
+
+/* ===== Utilidades ===== */
+const byId = id => document.getElementById(id);
+const fmtDate = iso => {
+  if(!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d)) return iso;
+  return d.toLocaleDateString("pt-BR");
+};
+const parseDate = v => {
+  // v esperado yyyy-mm-dd
+  const d = new Date(v);
+  return isNaN(d) ? null : d.toISOString();
+};
+const sanitizePhone = v => (v||"").replace(/[^\d]/g,"");
+const formatPhoneBR = v => {
+  const d = sanitizePhone(v);
+  if (d.length < 10) return v || "";
+  const dd = d.length === 11
+    ? d.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3")
+    : d.replace(/^(\d{2})(\d{4})(\d{4}).*/, "($1) $2-$3");
+  return dd;
+};
+const whatsappLink = v => {
+  const d = sanitizePhone(v);
+  if (d.length < 10) return null;
+  // Brasil: +55
+  return `https://wa.me/55${d}`;
+};
+const uid = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+const saveLocal = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(pessoas));
+const loadLocal = () => {
+  try{
+    pessoas = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  }catch{ pessoas = []; }
+};
+const compare = (a,b,f) => {
+  const va = (a?.[f] ?? "").toString().toLowerCase();
+  const vb = (b?.[f] ?? "").toString().toLowerCase();
+  if (va < vb) return -1;
+  if (va > vb) return 1;
+  return 0;
+};
+
+/* ===== Renderização ===== */
+function populateOrigemSelects(){
+  const sel = byId("fOrigem");
+  sel.innerHTML = ORIGENS.map(o => `<option>${o}</option>`).join("");
+  const f = byId("filterOrigem");
+  f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option>${o}</option>`).join("");
+}
+
+function renderTable(){
+  const tbody = document.querySelector("#tbl tbody");
+  const q = byId("q").value.trim().toLowerCase();
+  const filtroOrigem = byId("filterOrigem").value;
+  const filtroDiscip = byId("filterDiscipulador").value.trim().toLowerCase();
+  const filtroSexo = byId("filterSexo").value;
+
+  let list = [...pessoas];
+
+  if (q) {
+    list = list.filter(p =>
+      (p.nome||"").toLowerCase().includes(q) ||
+      (p.email||"").toLowerCase().includes(q) ||
+      sanitizePhone(p.telefone).includes(q.replace(/[^\d]/g,""))
+    );
+  }
+  if (filtroOrigem) list = list.filter(p => p.origem === filtroOrigem);
+  if (filtroDiscip) list = list.filter(p => (p.discipulador||"").toLowerCase().includes(filtroDiscip));
+  if (filtroSexo) list = list.filter(p => p.sexo === filtroSexo);
+
+  // Ordenação
+  list.sort((a,b) => {
+    const f = sort.field;
+    if (f === "dataInicio") {
+      const va = a.dataInicio || "";
+      const vb = b.dataInicio || "";
+      return sort.dir === "asc" ? va.localeCompare(vb) : vb.localeCompare(va);
+    }
+    const r = compare(a,b,f);
+    return sort.dir === "asc" ? r : -r;
+  });
+
+  tbody.innerHTML = list.map(p => {
+    const telFmt = formatPhoneBR(p.telefone);
+    const wpp = whatsappLink(p.telefone);
+    const sexoTag = p.sexo === "Masculino" ? "m" : p.sexo === "Feminino" ? "f" : "o";
+    return `<tr>
+      <td><div class="stack"><strong>${p.nome||""}</strong><span class="muted mono">${p.id.slice(0,8)}</span></div></td>
+      <td><span class="tag ${sexoTag}">${p.sexo||""}</span></td>
+      <td>${p.idade ?? ""}</td>
+      <td>${p.endereco ?? ""}</td>
+      <td class="nowrap">
+        ${telFmt || ""}
+        ${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">Abrir WhatsApp</a></div>` : ""}
+      </td>
+      <td>${p.email ?? ""}</td>
+      <td>${p.origem ?? ""}</td>
+      <td>${p.discipulador ?? ""}</td>
+      <td class="nowrap">${fmtDate(p.dataInicio)}</td>
+      <td class="nowrap">
+        <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
+        <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
+      </td>
+    </tr>`;
+  }).join("");
+
+  updateKPIs(list);
+}
+
+function updateKPIs(currentList){
+  byId("kpiTotal").textContent = pessoas.length;
+  const masc = pessoas.filter(p=>p.sexo==="Masculino").length;
+  const fem  = pessoas.filter(p=>p.sexo==="Feminino").length;
+  const out  = pessoas.filter(p=>p.sexo==="Outro").length;
+  byId("kpiMasc").textContent = masc;
+  byId("kpiFem").textContent  = fem;
+  byId("kpiOut").textContent  = out;
+
+  const withWpp = pessoas.filter(p => sanitizePhone(p.telefone).length >= 10).length;
+  byId("kpiWpp").textContent = withWpp;
+
+  const now = new Date();
+  const last30 = pessoas.filter(p => {
+    if(!p.dataInicio) return false;
+    const d = new Date(p.dataInicio);
+    return (now - d) <= (30*24*60*60*1000);
+  }).length;
+  byId("kpi30").textContent = last30;
+
+  // chips de origens na primeira carta (com base na lista atualmente visível)
+  const counts = {};
+  (currentList || pessoas).forEach(p => {
+    if(!p.origem) return;
+    counts[p.origem] = (counts[p.origem]||0)+1;
+  });
+  const chips = Object.entries(counts)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,6)
+    .map(([k,v])=> `<span class="chip">${k}: <b>${v}</b></span>`).join("");
+  byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
+}
+
+/* ===== CRUD ===== */
+function openModal(edit=false){
+  byId("dlgTitle").textContent = edit ? "Editar pessoa" : "Nova pessoa";
+  byId("errors").style.display="none";
+  byId("frm").reset?.();
+  byId("dlg").showModal();
+}
+function closeModal(){ byId("dlg").close(); }
+
+function onCreate(){
+  editingId = null;
+  byId("fNome").value = "";
+  byId("fSexo").value = "";
+  byId("fIdade").value = "";
+  byId("fEndereco").value = "";
+  byId("fTelefone").value = "";
+  byId("fEmail").value = "";
+  byId("fOrigem").value = ORIGENS[0];
+  byId("fDiscipulador").value = "";
+  byId("fDataInicio").valueAsDate = new Date();
+  openModal(false);
+}
+function onEdit(id){
+  const p = pessoas.find(x=>x.id===id);
+  if(!p) return;
+  editingId = id;
+  byId("fNome").value = p.nome || "";
+  byId("fSexo").value = p.sexo || "";
+  byId("fIdade").value = p.idade ?? "";
+  byId("fEndereco").value = p.endereco || "";
+  byId("fTelefone").value = p.telefone || "";
+  byId("fEmail").value = p.email || "";
+  byId("fOrigem").value = p.origem || ORIGENS[0];
+  byId("fDiscipulador").value = p.discipulador || "";
+  if (p.dataInicio) {
+    const d = new Date(p.dataInicio);
+    byId("fDataInicio").value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  } else {
+    byId("fDataInicio").value = "";
+  }
+  openModal(true);
+}
+function onDelete(id){
+  const p = pessoas.find(x=>x.id===id);
+  if(!p) return;
+  if(confirm(`Excluir "${p.nome}"? Esta ação não pode ser desfeita.`)){
+    pessoas = pessoas.filter(x=>x.id!==id);
+    saveLocal(); renderTable();
+  }
+}
+
+function validateForm(data){
+  const errs = [];
+  if(!data.nome || data.nome.trim().length < 2) errs.push("Informe um nome válido.");
+  if(!data.sexo) errs.push("Selecione o sexo.");
+  if(data.idade !== "" && (isNaN(+data.idade) || +data.idade < 0 || +data.idade > 120)) errs.push("Idade inválida.");
+  if(data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.push("E-mail inválido.");
+  if(!data.origem) errs.push("Selecione a origem.");
+  if(!data.dataInicio) errs.push("Informe a data de início.");
+  return errs;
+}
+
+function onSave(e){
+  e?.preventDefault?.();
+  const data = {
+    id: editingId || uid(),
+    nome: byId("fNome").value.trim(),
+    sexo: byId("fSexo").value,
+    idade: byId("fIdade").value?.trim() || "",
+    endereco: byId("fEndereco").value.trim(),
+    telefone: byId("fTelefone").value.trim(),
+    email: byId("fEmail").value.trim(),
+    origem: byId("fOrigem").value,
+    discipulador: byId("fDiscipulador").value.trim(),
+    dataInicio: parseDate(byId("fDataInicio").value)
+  };
+  const errs = validateForm(data);
+  const box = byId("errors");
+  if (errs.length){
+    box.textContent = errs.join(" ");
+    box.style.display = "block";
+    return;
+  } else {
+    box.style.display = "none";
+  }
+  if (editingId){
+    const idx = pessoas.findIndex(x=>x.id===editingId);
+    pessoas[idx] = {...pessoas[idx], ...data};
+  } else {
+    pessoas.unshift(data);
+  }
+  saveLocal(); renderTable(); closeModal();
+}
+
+/* ===== Import/Export/Seed/Wipe ===== */
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(pessoas, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "pessoas.json"; a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data)) throw new Error("Formato inválido");
+      // normaliza ids faltantes
+      pessoas = data.map(p => ({ id: p.id || uid(), ...p }));
+      saveLocal(); renderTable();
+      alert("Importação concluída.");
+    }catch(err){
+      alert("Falha ao importar: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+function seed(){
+  if(!confirm("Inserir dados de exemplo?")) return;
+  const today = new Date();
+  const iso = d => new Date(d).toISOString();
+  const addDays = (n)=> new Date(today.getTime()+ n*86400000);
+  pessoas = [
+    {id:uid(), nome:"Ana Souza", sexo:"Feminino", idade:29, endereco:"Rua das Flores, 123 - Centro, Curitiba",
+     telefone:"(41) 99876-1234", email:"ana.souza@email.com", origem:"Mídias sociais", discipulador:"Priscila",
+     dataInicio: iso(addDays(-3))},
+    {id:uid(), nome:"Carlos Lima", sexo:"Masculino", idade:35, endereco:"Av. Brasil, 450 - Vila Bela, São Paulo",
+     telefone:"(11) 91234-5678", email:"carlos.lima@email.com", origem:"Indicação de amigo(a)", discipulador:"João",
+     dataInicio: iso(addDays(-15))},
+    {id:uid(), nome:"Beatriz Almeida", sexo:"Feminino", idade:22, endereco:"Rua 7 de Setembro, 77 - Porto Alegre",
+     telefone:"(51) 99111-2233", email:"", origem:"Evento/Conferência", discipulador:"Marina",
+     dataInicio: iso(addDays(-40))},
+    {id:uid(), nome:"Rafael Santos", sexo:"Masculino", idade:41, endereco:"Av. Atlântica, 900 - Rio de Janeiro",
+     telefone:"(21) 98888-0000", email:"rafa.santos@email.com", origem:"Conversão", discipulador:"Pedro",
+     dataInicio: iso(addDays(-1))},
+    {id:uid(), nome:"João Pedro", sexo:"Masculino", idade:19, endereco:"Rua A, 10 - Recife",
+     telefone:"(81) 98765-4321", email:"", origem:"Projeto social", discipulador:"Lucas",
+     dataInicio: iso(addDays(-5))}
+  ];
+  saveLocal(); renderTable();
+}
+function wipe(){
+  if(confirm("Tem certeza que deseja apagar TODOS os registros?")){
+    pessoas = []; saveLocal(); renderTable();
+  }
+}
+
+/* ===== Eventos ===== */
+function attachEvents(){
+  byId("btnAdd").addEventListener("click", onCreate);
+  byId("btnClose").addEventListener("click", closeModal);
+  byId("btnCancel").addEventListener("click", closeModal);
+  byId("frm").addEventListener("submit", onSave);
+
+  byId("q").addEventListener("input", renderTable);
+  byId("filterOrigem").addEventListener("change", renderTable);
+  byId("filterDiscipulador").addEventListener("input", renderTable);
+  byId("filterSexo").addEventListener("change", renderTable);
+  byId("btnClearFilters").addEventListener("click", () => {
+    byId("q").value=""; byId("filterOrigem").value=""; byId("filterDiscipulador").value=""; byId("filterSexo").value="";
+    renderTable();
+  });
+
+  byId("btnExport").addEventListener("click", exportJSON);
+  byId("btnImport").addEventListener("click", ()=> importJSON(byId("importFile").files?.[0]));
+  byId("btnSeed").addEventListener("click", seed);
+  byId("btnWipe").addEventListener("click", wipe);
+
+  // Ordenação por cabeçalho (Nome e Início)
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    //th.style.cursor="pointer";
+    th.title="Clique para ordenar";
+    th.addEventListener("click", () => {
+      const f = th.dataset.sort;
+      sort = { field: f, dir: (sort.field===f && sort.dir==="asc") ? "desc" : "asc" };
+      renderTable();
+    });
+  });
+
+  // máscara simples ao sair do campo telefone
+  byId("fTelefone").addEventListener("blur", (e)=>{
+    e.target.value = formatPhoneBR(e.target.value);
+  });
+}
+
+/* ===== Boot ===== */
+(function init(){
+  populateOrigemSelects();
+  loadLocal();
+  attachEvents();
+  renderTable();
+})();
+</script>
+</body>
+</html>
