@@ -8,7 +8,7 @@
   :root{
     --bg1: #FAEEDB;
     --bg2: #B3AB80;
-    --bg3: #1C5B48;
+    --bg3: #e2ff99f2;
     --panel: #184e3e;
     --muted: #949db2;
     --text: #ffffff;
@@ -22,7 +22,7 @@
   }
   *{box-sizing:border-box}
   body{
-    margin:0; background:linear-gradient(180deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+    margin:0; background:linear-gradient(180deg, var(--bg1), var(--bg3));
     color:var(--text); font:16px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
     min-height:100dvh;
   }
@@ -30,7 +30,7 @@
     position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.4) blur(8px);
     background:rgba(15,17,21,.7); border-bottom:1px solid var(--line);
   }
-  .wrap{max-width:1200px; margin:0 auto; padding:18px 20px;}
+  .wrap{max-width:1440px; margin:0 auto; padding:18px 20px;}
   .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px}
   .brand .dot{width:11px; height:11px; background:conic-gradient(from 210deg, #7c5cff, #5cc8ff, #7c5cff); border-radius:50%}
   .brand small{color:var(--muted); font-weight:500}
@@ -45,7 +45,7 @@
     flex:1 1 240px; min-width:200px;
   }
   input, select, button, textarea{
-    background: var(--bg2); border:1px solid var(--line); color:var(--text);
+    background: transparent; border:1px solid var(--line); color:var(--text);
     border-radius:10px; padding:10px 12px; outline:none;
   }
   input::placeholder{color:#6e7890}
@@ -57,9 +57,12 @@
   .btn.warn{background:rgba(239,68,68,.12); border-color:#5e2323}
   .btn:disabled{opacity:.6; cursor:not-allowed}
   .chips{display:flex; gap:8px; flex-wrap:wrap;}
-  .chip{background:var(--chip); color:#aeb6cb; border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:14px}
+  .chip{ background: var(--bg2); color: var(--text); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:14px}
   .grid{
     display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:18px;
+  }
+  select option {
+    background-color: var(--bg2);
   }
   .card{
     grid-column:span 3; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px;
@@ -72,11 +75,11 @@
   table{width:100%; border-collapse:collapse}
   thead th{
     text-align:left; font-size:14px; color:#9aa4bc; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
-    background:var(--panel); position:sticky; top:68px; z-index:5; border-bottom:1px solid var(--line);
+    background:var(--panel); position:sticky; z-index:5; border-bottom:1px solid var(--line);
     white-space: nowrap;
   }
   th, td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top}
-  tbody tr:hover{background:#111621}
+  tbody tr:hover{backdrop-filter: contrast(0.75);}
   .nowrap{white-space:nowrap}
   .muted{color:var(--muted)}
   .stack{display:flex; flex-direction:column; gap:4px}
@@ -107,7 +110,7 @@
   .help{font-size:14px; color:#93a0bf}
   .danger{color:#ffb4b4}
   .footer{display:flex; gap:10px; justify-content:flex-end; padding:14px 18px; border-top:1px solid var(--line); background:#10141c}
-  /* Responsive tweaks */
+  .controls .row > * { background: var(--bg2); }
   @media (max-width: 960px){
     .card{grid-column:span 6}
   }
@@ -187,7 +190,7 @@
               <th class="w-120">Idade</th>
               <th>Endereço</th>
               <th class="w-160">Telefone</th>
-              <th>E-mail</th>
+              <th class="w-120">E-mail</th>
               <th class="w-160">Origem</th>
               <th class="w-160">Discipulador</th>
               <th class="w-160 nowrap" data-sort="dataInicio">Início</th>
