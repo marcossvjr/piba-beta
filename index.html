@@ -6,19 +6,21 @@
     <title>PIBA • Discipulados</title>
     <style>
         :root {
-            --bg1: #FAEEDB;
+            --bg1: #ffffff;
             --bg2: #B3AB80;
-            --bg3: #e2ff99f2;
-            --panel: #184e3e;
+            --bg3: #f9ffebf2;
+            --panel: #ffffff;
             --muted: #949db2;
-            --text: #ffffff;
+            --text: #000000;
             --accent: #B2CB3C;
             --ok: #22c55e;
             --warn: #ef4444;
-            --line: #FAEEDB;
+            --line: #888;
             --chip: #FAEEDB;
             --focus: 0 0 0 3px rgb(178 203 60 / 75%);
             --radius: 8px;
+            --btnColor: #000;
+            --h1Color: #fff;
         }
 
         * {
@@ -40,6 +42,12 @@
             backdrop-filter: blur(8px);
             background: rgba(15,17,21,.85);
             border-bottom: 1px solid var(--line);
+        }
+
+        .h1 {
+            color: var(--h1Color);
+            font-size: 16px;
+            margin: 0;
         }
 
         .wrap {
@@ -74,11 +82,15 @@
 
         button {
             padding: 8px 12px;
-            border-radius: 8px;
+            border-radius: var(--radius);
             border: 1px solid var(--line);
             background: transparent;
             color: var(--text);
             cursor: pointer
+        }
+
+        .btn {
+            color: var(--btnColor);
         }
 
         .btn.primary {
@@ -104,8 +116,8 @@
 
         .container {
             max-width: 1200px;
-            margin: 18px auto;
-            padding: 18px;
+            margin: 0 auto;
+            padding: 15px;
         }
 
         .toolbar {
@@ -113,14 +125,14 @@
             gap: 8px;
             flex-wrap: wrap;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: var(--radius);
             border: 1px solid var(--line);
             background: var(--panel)
         }
 
         input, select {
             padding: 8px 10px;
-            border-radius: 8px;
+            border-radius: var(--radius);
             border: 1px solid var(--line);
             background: transparent;
             color: var(--text)
@@ -145,7 +157,7 @@
             grid-column: 1 / -1;
             background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 10px;
+            border-radius: var(--radius);
             overflow: auto;
             padding: 0
         }
@@ -178,7 +190,7 @@
 
         dialog {
             width: min(920px,96vw);
-            border-radius: 12px;
+            border-radius: var(--radius);
             background: var(--panel);
             color: var(--text);
             border: 1px solid var(--line);
@@ -225,19 +237,19 @@
 <body>
     <header>
         <div class="wrap">
-            <div class="brand"><span class="dot"></span> PIBA • Discipulados</div>
+            <div class="brand"><span class="dot"></span><h1 class="h1"> PIBA • Discipulados</h1></div>
             <div class="right">
                 <div id="authArea" style="display:flex; gap:8px; align-items:center">
                     <span id="userEmail" class="help mono"></span>
                     <button id="btnSignIn" class="btn primary">Entrar com Google</button>
-                    <button id="btnSignOut" class="btn" style="display:none">Sair</button>
+                    <button id="btnSignOut" class="btn" style="display:none; color: #fff;">Sair</button>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <div id="notAuth" style="padding:20px; background:rgba(0,0,0,.2); border-radius:8px; margin-bottom:12px;">
+        <div id="notAuth" style="padding: 20px; background: rgba(0,0,0,.2); border-radius: var(--radius); margin-bottom: 12px;">
             <strong>Você precisa entrar com sua Conta Google para acessar o dashboard.</strong>
         </div>
 
@@ -252,7 +264,6 @@
                     <option value="">Sexo (todos)</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Feminino">Feminino</option>
-                    <option value="Outro">Outro</option>
                 </select>
                 <button id="btnClearFilters" class="btn">Limpar filtros</button>
                 <div style="margin-left:auto; display:flex; gap:8px;">
@@ -269,13 +280,8 @@
                 <div class="card">
                     <h3>Por sexo</h3>
                     <div class="row" style="margin-top:6px">
-                        <span class="mono">Masc: <b id="kpiMasc">0</b></span><span class="mono">Fem: <b id="kpiFem">0</b></span><span class="mono">Out: <b id="kpiOut">0</b></span>
+                        <span class="mono">Masc: <b id="kpiMasc">0</b> </span><span class="mono">Fem: <b id="kpiFem">0</b> </span>
                     </div>
-                </div>
-                <div class="card">
-                    <h3>Com WhatsApp</h3>
-                    <div class="num" id="kpiWpp">0</div>
-                    <div class="help">Telefones com 10 ou 11 dígitos</div>
                 </div>
                 <div class="card">
                     <h3>Iniciados (últimos 30 dias)</h3>
@@ -291,7 +297,6 @@
                             <button id="btnSeed" class="btn" title="Inserir alguns dados de exemplo">Gerar exemplos</button>
                             <button id="btnWipe" class="btn warn" title="Apagar tudo">Apagar tudo</button>
                         </div>
-                        <div class="help">Dados salvos no Firestore do seu usuário.</div>
                     </div>
 
                     <table id="tbl" style="width:100%">
@@ -329,7 +334,7 @@
                         </div>
                         <div style="grid-column:span 3">
                             <label>Sexo</label>
-                            <select id="fSexo" required><option value="">Selecione…</option><option>Masculino</option><option>Feminino</option><option>Outro</option></select>
+                            <select id="fSexo" required><option value="">Selecione…</option><option>Masculino</option><option>Feminino</option></select>
                         </div>
                         <div style="grid-column:span 3">
                             <label>Idade</label><input id="fIdade" type="number" min="0" max="120" placeholder="Ex: 32" />
@@ -344,7 +349,6 @@
                         <div style="grid-column:span 6"><label>Data do início</label><input id="fDataInicio" type="date" required /></div>
 
                         <div style="grid-column:span 12">
-                            <div class="help">Os dados são salvos no Firestore do seu usuário. Para migrar, use Exportar/Importar JSON.</div>
                             <div class="help danger" id="errors" style="display:none; margin-top:6px"></div>
                         </div>
                     </div>
@@ -463,8 +467,7 @@
             byId("kpiTotal").textContent = pessoas.length;
             const masc = pessoas.filter(p => p.sexo === "Masculino").length;
             const fem = pessoas.filter(p => p.sexo === "Feminino").length;
-            const out = pessoas.filter(p => p.sexo === "Outro").length;
-            byId("kpiMasc").textContent = masc; byId("kpiFem").textContent = fem; byId("kpiOut").textContent = out;
+            byId("kpiMasc").textContent = masc; byId("kpiFem").textContent = fem;
             const withWpp = pessoas.filter(p => sanitizePhone(p.telefone).length >= 10).length;
             byId("kpiWpp").textContent = withWpp;
             const now = new Date();
