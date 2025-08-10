@@ -1,633 +1,790 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PIBA • Discipulados </title>
-<style>
-  :root{
-    --bg1: #FAEEDB;
-    --bg2: #B3AB80;
-    --bg3: #e2ff99f2;
-    --panel: #184e3e;
-    --muted: #949db2;
-    --text: #ffffff;
-    --accent: #B2CB3C;
-    --ok: #22c55e;
-    --warn: #ef4444;
-    --line: #FAEEDB;
-    --chip: #FAEEDB;
-    --focus: 0 0 0 3px rgb(178 203 60 / 75%);
-    --radius: 8px;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; background:linear-gradient(180deg, var(--bg1), var(--bg3));
-    color:var(--text); font:16px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-    min-height:100dvh;
-  }
-  header{
-    position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.4) blur(8px);
-    background:rgba(15,17,21,.7); border-bottom:1px solid var(--line);
-  }
-  .wrap{max-width:1440px; margin:0 auto; padding:18px 20px;}
-  .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px}
-  .brand .dot{width:11px; height:11px; background:conic-gradient(from 210deg, #7c5cff, #5cc8ff, #7c5cff); border-radius:50%}
-  .brand small{color:var(--muted); font-weight:500}
-  main .controls{
-    display:grid; grid-template-columns: 1fr auto; gap:14px; align-items:stretch; margin-top:16px;
-  }
-  .toolbar{
-    display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:14px; border:1px solid var(--line);
-    border-radius:var(--radius); background:var(--panel);
-  }
-  .toolbar input[type="search"]{
-    flex:1 1 240px; min-width:200px;
-  }
-  input, select, button, textarea{
-    background: transparent; border:1px solid var(--line); color:var(--text);
-    border-radius:10px; padding:10px 12px; outline:none;
-  }
-  input::placeholder{color:#6e7890}
-  input:focus, select:focus, textarea:focus{box-shadow:var(--focus); border-color:#3d4251}
-  .btn{display:inline-flex; align-items:center; gap:8px; font-weight:600; letter-spacing:.2px; cursor:pointer}
-  .btn.primary{background:var(--accent); border-color:transparent}
-  .btn.ghost{background:transparent}
-  .btn.ok{background:rgba(34,197,94,.14); border-color: var(--focus);}
-  .btn.warn{background:rgba(239,68,68,.12); border-color:#5e2323}
-  .btn:disabled{opacity:.6; cursor:not-allowed}
-  .chips{display:flex; gap:8px; flex-wrap:wrap;}
-  .chip{ background: var(--bg2); color: var(--text); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:14px}
-  .grid{
-    display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:18px;
-  }
-  select option {
-    background-color: var(--bg2);
-  }
-  .card{
-    grid-column:span 3; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px;
-  }
-  .card h3{margin:0 0 6px 0; font-size:14px; color:#a7b0c7; font-weight:600}
-  .card .num{font-weight:800; font-size:26px; letter-spacing:.4px}
-  .table-card{
-    grid-column:1 / -1; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden
-  }
-  table{width:100%; border-collapse:collapse}
-  thead th{
-    text-align:left; font-size:14px; color:#9aa4bc; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
-    background:var(--panel); position:sticky; z-index:5; border-bottom:1px solid var(--line);
-    white-space: nowrap;
-  }
-  th, td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top}
-  tbody tr:hover{backdrop-filter: contrast(0.75);}
-  .nowrap{white-space:nowrap}
-  .muted{color:var(--muted)}
-  .stack{display:flex; flex-direction:column; gap:4px}
-  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-  .grow{flex:1}
-  .right{margin-left:auto}
-  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-  .w-120{width:120px}
-  .w-160{width:160px}
-  .w-200{width:200px}
-  .tag{padding:4px 8px; border-radius:999px; font-size:14px; border:1px solid var(--line); background: var(--bg2);}
-  .tag.m{border-color:#2d3a73}
-  .tag.f{border-color:#73305b}
-  .tag.o{border-color:#3a7360}
-  /* Modal */
-  dialog{
-    width:min(920px, 96vw); border:1px solid var(--line); border-radius:16px; padding:0; background:var(--panel); color:var(--text)
-  }
-  dialog::backdrop{background:rgba(0,0,0,.6)}
-  .modal-header{display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--line)}
-  .modal-body{padding:16px 18px}
-  .grid-form{display:grid; grid-template-columns: repeat(12, 1fr); gap:12px}
-  .grid-form .col-12{grid-column:span 12}
-  .grid-form .col-6{grid-column:span 6}
-  .grid-form .col-4{grid-column:span 4}
-  .grid-form .col-3{grid-column:span 3}
-  label{display:block; font-size:14px; color:#9aa4bc; margin:0 0 6px 2px}
-  .help{font-size:14px; color:#93a0bf}
-  .danger{color:#ffb4b4}
-  .footer{display:flex; gap:10px; justify-content:flex-end; padding:14px 18px; border-top:1px solid var(--line); background:#10141c}
-  .controls .row > * { background: var(--bg2); }
-  @media (max-width: 960px){
-    .card{grid-column:span 6}
-  }
-  @media (max-width: 640px){
-    .grid{gap:10px}
-    .card{grid-column:span 12}
-    .toolbar{padding:10px}
-    thead th{position:static}
-  }
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PIBA • Discipulados</title>
+    <style>
+        :root {
+            --bg1: #FAEEDB;
+            --bg2: #B3AB80;
+            --bg3: #e2ff99f2;
+            --panel: #184e3e;
+            --muted: #949db2;
+            --text: #ffffff;
+            --accent: #B2CB3C;
+            --ok: #22c55e;
+            --warn: #ef4444;
+            --line: #FAEEDB;
+            --chip: #FAEEDB;
+            --focus: 0 0 0 3px rgb(178 203 60 / 75%);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg,var(--bg1),var(--bg3));
+            color: var(--text);
+            font: 16px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+            min-height: 100dvh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+            background: rgba(15,17,21,.85);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .brand {
+            font-weight: 700;
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: conic-gradient(from 210deg,#7c5cff,#5cc8ff,#7c5cff)
+        }
+
+        .right {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            border-color: transparent;
+            color: #0a0a0a;
+            font-weight: 700
+        }
+
+        .btn.warn {
+            background: rgba(239,68,68,.12);
+            border-color: #5e2323
+        }
+
+        .btn.ok {
+            background: rgba(34,197,94,.14);
+            border-color: var(--focus)
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 18px auto;
+            padding: 18px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--panel)
+        }
+
+        input, select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12,1fr);
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .card {
+            grid-column: span 3;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px
+        }
+
+        .table-card {
+            grid-column: 1 / -1;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: auto;
+            padding: 0
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: var(--panel);
+            z-index: 2;
+            font-weight: 700;
+            color: #a7b0c7
+        }
+
+        .mono {
+            font-family: ui-monospace, Menlo, Monaco, monospace;
+            color: #cbd5e1;
+            font-size: 12px
+        }
+
+        dialog {
+            width: min(920px,96vw);
+            border-radius: 12px;
+            background: var(--panel);
+            color: var(--text);
+            border: 1px solid var(--line);
+            padding: 0
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .modal-body {
+            padding: 12px
+        }
+
+        .footer {
+            padding: 12px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px
+        }
+
+        .help {
+            color: #93a0bf;
+            font-size: 13px
+        }
+
+        @media(max-width:800px) {
+            .card {
+                grid-column: span 6
+            }
+
+            @media(max-width:520px) {
+                .card {
+                    grid-column: span 12
+                }
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="wrap row">
-      <div class="brand"><span class="dot"></span> PIBA • Discipulados <small></small></div>
-      <div class="right row">
-        <button id="btnAdd" class="btn primary">+ Nova pessoa</button>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <section class="controls">
-      <div class="toolbar">
-        <input id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone…" />
-        <select id="filterOrigem" class="w-200">
-          <option value="">Todas as origens</option>
-        </select>
-        <input id="filterDiscipulador" class="w-160" type="text" placeholder="Filtrar discipulador" />
-        <select id="filterSexo" class="w-120">
-          <option value="">Sexo (todos)</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Outro">Outro</option>
-        </select>
-        <button id="btnClearFilters" class="btn ghost">Limpar filtros</button>
-      </div>
-      <div class="row" style="margin-top: 10px;">
-        <input id="importFile" type="file" accept=".json" class="w-200" />
-        <button id="btnImport" class="btn">Importar JSON</button>
-        <button id="btnExport" class="btn ok">Exportar JSON</button>
-        <button id="btnSeed" class="btn ghost" title="Inserir alguns dados de exemplo">Gerar exemplos</button>
-        <button id="btnWipe" class="btn warn" title="Apagar tudo">Apagar tudo</button>
-      </div>
-    </section>
-
-    <section class="grid">
-      <div class="card">
-        <h3>Total de pessoas</h3>
-        <div class="num" id="kpiTotal">0</div>
-        <div class="chips" id="chipsOrigens"></div>
-      </div>
-      <div class="card">
-        <h3>Por sexo</h3>
-        <div class="row" style="margin-top:6px">
-          <span class="tag m">Masc: <b id="kpiMasc">0</b></span>
-          <span class="tag f">Fem: <b id="kpiFem">0</b></span>
-          <span class="tag o">Outro: <b id="kpiOut">0</b></span>
+    <header>
+        <div class="wrap">
+            <div class="brand"><span class="dot"></span> PIBA • Discipulados</div>
+            <div class="right">
+                <div id="authArea" style="display:flex; gap:8px; align-items:center">
+                    <span id="userEmail" class="help mono"></span>
+                    <button id="btnSignIn" class="btn primary">Entrar com Google</button>
+                    <button id="btnSignOut" class="btn" style="display:none">Sair</button>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="card">
-        <h3>Com WhatsApp</h3>
-        <div class="num" id="kpiWpp">0</div>
-        <div class="help">Telefones com 11+ dígitos</div>
-      </div>
-      <div class="card">
-        <h3>Iniciados (últimos 30 dias)</h3>
-        <div class="num" id="kpi30">0</div>
-      </div>
+    </header>
 
-      <div class="table-card">
-        <table id="tbl">
-          <thead>
-            <tr>
-              <th data-sort="nome" class="sortable">Nome</th>
-              <th class="w-120">Sexo</th>
-              <th class="w-120">Idade</th>
-              <th>Endereço</th>
-              <th class="w-160">Telefone</th>
-              <th class="w-120">E-mail</th>
-              <th class="w-160">Origem</th>
-              <th class="w-160">Discipulador</th>
-              <th class="w-160 nowrap" data-sort="dataInicio">Início</th>
-              <th class="w-160">Ações</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-
-  <!-- Modal -->
-  <dialog id="dlg">
-    <form method="dialog" id="frm">
-      <div class="modal-header">
-        <strong id="dlgTitle">Nova pessoa</strong>
-        <button value="close" class="btn ghost" type="button" id="btnClose">Fechar</button>
-      </div>
-      <div class="modal-body">
-        <div class="grid-form">
-          <div class="col-6">
-            <label for="fNome">Nome</label>
-            <input id="fNome" required placeholder="Nome completo" />
-          </div>
-          <div class="col-3">
-            <label for="fSexo">Sexo</label>
-            <select id="fSexo" required>
-              <option value="">Selecione…</option>
-              <option>Masculino</option>
-              <option>Feminino</option>
-              <option>Outro</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <label for="fIdade">Idade</label>
-            <input id="fIdade" type="number" min="0" max="120" placeholder="Ex: 32" />
-          </div>
-
-          <div class="col-12">
-            <label for="fEndereco">Endereço</label>
-            <input id="fEndereco" placeholder="Rua, nº, bairro, cidade" />
-          </div>
-
-          <div class="col-4">
-            <label for="fTelefone">Telefone (WhatsApp)</label>
-            <input id="fTelefone" placeholder="(DDD) 9XXXX-XXXX" />
-          </div>
-          <div class="col-4">
-            <label for="fEmail">E-mail</label>
-            <input id="fEmail" type="email" placeholder="email@exemplo.com" />
-          </div>
-          <div class="col-4">
-            <label for="fOrigem">Origem</label>
-            <select id="fOrigem" required></select>
-          </div>
-
-          <div class="col-6">
-            <label for="fDiscipulador">Discipulador</label>
-            <input id="fDiscipulador" placeholder="Nome do discipulador" />
-          </div>
-          <div class="col-6">
-            <label for="fDataInicio">Data do início do acompanhamento</label>
-            <input id="fDataInicio" type="date" required />
-          </div>
-
-          <div class="col-12">
-            <div class="help">Os dados são salvos no seu navegador (LocalStorage). Para migrar, use Exportar/Importar JSON.</div>
-            <div class="help danger" id="errors" style="display:none; margin-top:6px"></div>
-          </div>
+    <main class="container">
+        <div id="notAuth" style="padding:20px; background:rgba(0,0,0,.2); border-radius:8px; margin-bottom:12px;">
+            <strong>Você precisa entrar com sua Conta Google para acessar o dashboard.</strong>
         </div>
-      </div>
-      <div class="footer">
-        <button class="btn ghost" value="cancel" type="button" id="btnCancel">Cancelar</button>
-        <button class="btn primary" id="btnSave" type="submit">Salvar</button>
-      </div>
-    </form>
-  </dialog>
 
-<script>
-/* ===== Configurações ===== */
-const STORAGE_KEY = "dashboard_pessoas_v1";
-const ORIGENS = [
-  "Indicação de amigo(a)",
-  "Conversão",
-  "Transferência de igreja/congregação",
-  "Evangelismo de rua",
-  "Mídias sociais",
-  "Evento/Conferência",
-  "Visita domiciliar",
-  "Projeto social",
-  "Culto online",
-  "Outros"
-];
+        <div id="dashboard" class="hidden">
+            <section class="toolbar" style="margin-bottom:12px">
+                <input id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone…" />
+                <select id="filterOrigem" style="min-width:220px">
+                    <option value="">Todas as origens</option>
+                </select>
+                <input id="filterDiscipulador" type="text" placeholder="Filtrar discipulador" />
+                <select id="filterSexo" style="width:160px">
+                    <option value="">Sexo (todos)</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                <button id="btnClearFilters" class="btn">Limpar filtros</button>
+                <div style="margin-left:auto; display:flex; gap:8px;">
+                    <button id="btnAdd" class="btn primary">+ Nova pessoa</button>
+                </div>
+            </section>
 
-/* ===== Estado ===== */
-let pessoas = [];
-let sort = { field: "nome", dir: "asc" };
-let editingId = null;
+            <section class="grid">
+                <div class="card">
+                    <h3>Total de pessoas</h3>
+                    <div class="num" id="kpiTotal">0</div>
+                    <div class="chips" id="chipsOrigens"></div>
+                </div>
+                <div class="card">
+                    <h3>Por sexo</h3>
+                    <div class="row" style="margin-top:6px">
+                        <span class="mono">Masc: <b id="kpiMasc">0</b></span><span class="mono">Fem: <b id="kpiFem">0</b></span><span class="mono">Out: <b id="kpiOut">0</b></span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Com WhatsApp</h3>
+                    <div class="num" id="kpiWpp">0</div>
+                    <div class="help">Telefones com 10 ou 11 dígitos</div>
+                </div>
+                <div class="card">
+                    <h3>Iniciados (últimos 30 dias)</h3>
+                    <div class="num" id="kpi30">0</div>
+                </div>
 
-/* ===== Utilidades ===== */
-const byId = id => document.getElementById(id);
-const fmtDate = iso => {
-  if(!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d)) return iso;
-  return d.toLocaleDateString("pt-BR");
-};
-const parseDate = v => {
-  // v esperado yyyy-mm-dd
-  const d = new Date(v);
-  return isNaN(d) ? null : d.toISOString();
-};
-const sanitizePhone = v => (v||"").replace(/[^\d]/g,"");
-const formatPhoneBR = v => {
-  const d = sanitizePhone(v);
-  if (d.length < 10) return v || "";
-  const dd = d.length === 11
-    ? d.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3")
-    : d.replace(/^(\d{2})(\d{4})(\d{4}).*/, "($1) $2-$3");
-  return dd;
-};
-const whatsappLink = v => {
-  const d = sanitizePhone(v);
-  if (d.length < 10) return null;
-  // Brasil: +55
-  return `https://wa.me/55${d}`;
-};
-const uid = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
-const saveLocal = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(pessoas));
-const loadLocal = () => {
-  try{
-    pessoas = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  }catch{ pessoas = []; }
-};
-const compare = (a,b,f) => {
-  const va = (a?.[f] ?? "").toString().toLowerCase();
-  const vb = (b?.[f] ?? "").toString().toLowerCase();
-  if (va < vb) return -1;
-  if (va > vb) return 1;
-  return 0;
-};
+                <div class="table-card" style="grid-column:1 / -1; margin-top:12px;">
+                    <div style="padding:10px 12px; display:flex; gap:8px; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.04)">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input id="importFile" type="file" accept=".json" />
+                            <button id="btnImport" class="btn">Importar JSON</button>
+                            <button id="btnExport" class="btn ok">Exportar JSON</button>
+                            <button id="btnSeed" class="btn" title="Inserir alguns dados de exemplo">Gerar exemplos</button>
+                            <button id="btnWipe" class="btn warn" title="Apagar tudo">Apagar tudo</button>
+                        </div>
+                        <div class="help">Dados salvos no Firestore do seu usuário.</div>
+                    </div>
 
-/* ===== Renderização ===== */
-function populateOrigemSelects(){
-  const sel = byId("fOrigem");
-  sel.innerHTML = ORIGENS.map(o => `<option>${o}</option>`).join("");
-  const f = byId("filterOrigem");
-  f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option>${o}</option>`).join("");
-}
+                    <table id="tbl" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th data-sort="nome" class="sortable">Nome</th>
+                                <th class="w-120">Sexo</th>
+                                <th class="w-120">Idade</th>
+                                <th>Endereço</th>
+                                <th class="w-160">Telefone</th>
+                                <th class="w-120">E-mail</th>
+                                <th class="w-160">Origem</th>
+                                <th class="w-160">Discipulador</th>
+                                <th class="w-160 nowrap" data-sort="dataInicio">Início</th>
+                                <th class="w-160">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
 
-function renderTable(){
-  const tbody = document.querySelector("#tbl tbody");
-  const q = byId("q").value.trim().toLowerCase();
-  const filtroOrigem = byId("filterOrigem").value;
-  const filtroDiscip = byId("filterDiscipulador").value.trim().toLowerCase();
-  const filtroSexo = byId("filterSexo").value;
+        <dialog id="dlg">
+            <form method="dialog" id="frm">
+                <div class="modal-header">
+                    <strong id="dlgTitle">Nova pessoa</strong>
+                    <button value="close" class="btn" type="button" id="btnClose">Fechar</button>
+                </div>
+                <div class="modal-body">
+                    <div style="display:grid; grid-template-columns:repeat(12,1fr); gap:10px">
+                        <div style="grid-column:span 6">
+                            <label>Nome</label>
+                            <input id="fNome" required placeholder="Nome completo" />
+                        </div>
+                        <div style="grid-column:span 3">
+                            <label>Sexo</label>
+                            <select id="fSexo" required><option value="">Selecione…</option><option>Masculino</option><option>Feminino</option><option>Outro</option></select>
+                        </div>
+                        <div style="grid-column:span 3">
+                            <label>Idade</label><input id="fIdade" type="number" min="0" max="120" placeholder="Ex: 32" />
+                        </div>
 
-  let list = [...pessoas];
+                        <div style="grid-column:span 12"><label>Endereço</label><input id="fEndereco" placeholder="Rua, nº, bairro, cidade" /></div>
+                        <div style="grid-column:span 4"><label>Telefone (WhatsApp)</label><input id="fTelefone" placeholder="(DDD) 9XXXX-XXXX" /></div>
+                        <div style="grid-column:span 4"><label>E-mail</label><input id="fEmail" type="email" placeholder="email@exemplo.com" /></div>
+                        <div style="grid-column:span 4"><label>Origem</label><select id="fOrigem" required></select></div>
 
-  if (q) {
-    list = list.filter(p =>
-      (p.nome||"").toLowerCase().includes(q) ||
-      (p.email||"").toLowerCase().includes(q) ||
-      sanitizePhone(p.telefone).includes(q.replace(/[^\d]/g,""))
-    );
-  }
-  if (filtroOrigem) list = list.filter(p => p.origem === filtroOrigem);
-  if (filtroDiscip) list = list.filter(p => (p.discipulador||"").toLowerCase().includes(filtroDiscip));
-  if (filtroSexo) list = list.filter(p => p.sexo === filtroSexo);
+                        <div style="grid-column:span 6"><label>Discipulador</label><input id="fDiscipulador" placeholder="Nome do discipulador" /></div>
+                        <div style="grid-column:span 6"><label>Data do início</label><input id="fDataInicio" type="date" required /></div>
 
-  // Ordenação
-  list.sort((a,b) => {
-    const f = sort.field;
-    if (f === "dataInicio") {
-      const va = a.dataInicio || "";
-      const vb = b.dataInicio || "";
-      return sort.dir === "asc" ? va.localeCompare(vb) : vb.localeCompare(va);
-    }
-    const r = compare(a,b,f);
-    return sort.dir === "asc" ? r : -r;
-  });
+                        <div style="grid-column:span 12">
+                            <div class="help">Os dados são salvos no Firestore do seu usuário. Para migrar, use Exportar/Importar JSON.</div>
+                            <div class="help danger" id="errors" style="display:none; margin-top:6px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button class="btn" value="cancel" type="button" id="btnCancel">Cancelar</button>
+                    <button class="btn primary" id="btnSave" type="submit">Salvar</button>
+                </div>
+            </form>
+        </dialog>
+    </main>
 
-  tbody.innerHTML = list.map(p => {
-    const telFmt = formatPhoneBR(p.telefone);
-    const wpp = whatsappLink(p.telefone);
-    const sexoTag = p.sexo === "Masculino" ? "m" : p.sexo === "Feminino" ? "f" : "o";
-    return `<tr>
-      <td><div class="stack"><strong>${p.nome||""}</strong><span class="muted mono">${p.id.slice(0,8)}</span></div></td>
-      <td><span class="tag ${sexoTag}">${p.sexo||""}</span></td>
-      <td>${p.idade ?? ""}</td>
-      <td>${p.endereco ?? ""}</td>
-      <td class="nowrap">
-        ${telFmt || ""}
-        ${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">Abrir WhatsApp</a></div>` : ""}
-      </td>
-      <td>${p.email ?? ""}</td>
-      <td>${p.origem ?? ""}</td>
-      <td>${p.discipulador ?? ""}</td>
-      <td class="nowrap">${fmtDate(p.dataInicio)}</td>
-      <td class="nowrap">
-        <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
-        <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
-      </td>
-    </tr>`;
-  }).join("");
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs8v-6HuK-iqlpOT1ktUNTLALCcDKchzY",
+            authDomain: "piba-beta.firebaseapp.com",
+            projectId: "piba-beta"
+            // storageBucket, messagingSenderId, appId
+        };
+        // ----------------------------------------------------------------
 
-  updateKPIs(list);
-}
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import {
+            getFirestore, collection, doc, addDoc, setDoc, getDocs, query, orderBy, where, deleteDoc, getDoc, writeBatch
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-function updateKPIs(currentList){
-  byId("kpiTotal").textContent = pessoas.length;
-  const masc = pessoas.filter(p=>p.sexo==="Masculino").length;
-  const fem  = pessoas.filter(p=>p.sexo==="Feminino").length;
-  const out  = pessoas.filter(p=>p.sexo==="Outro").length;
-  byId("kpiMasc").textContent = masc;
-  byId("kpiFem").textContent  = fem;
-  byId("kpiOut").textContent  = out;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        const db = getFirestore(app);
 
-  const withWpp = pessoas.filter(p => sanitizePhone(p.telefone).length >= 10).length;
-  byId("kpiWpp").textContent = withWpp;
+        /* ===== Config/estado ===== */
+        const STORAGE_KEY = "dashboard_pessoas_v1"; // apenas para compatibilidade local (não usado para persistência principal)
+        const ORIGENS = [
+            "Indicação de amigo(a)", "Conversão", "Transferência de igreja/congregação", "Evangelismo de rua",
+            "Mídias sociais", "Evento/Conferência", "Visita domiciliar", "Projeto social", "Culto online", "Outros"
+        ];
 
-  const now = new Date();
-  const last30 = pessoas.filter(p => {
-    if(!p.dataInicio) return false;
-    const d = new Date(p.dataInicio);
-    return (now - d) <= (30*24*60*60*1000);
-  }).length;
-  byId("kpi30").textContent = last30;
+        let pessoas = []; // cache local dos docs carregados
+        let sort = { field: "nome", dir: "asc" };
+        let editingId = null;
+        let currentUser = null; // objeto user do Firebase
+        let userBasePath = null; // ex: users/{uid}/pessoas
 
-  // chips de origens na primeira carta (com base na lista atualmente visível)
-  const counts = {};
-  (currentList || pessoas).forEach(p => {
-    if(!p.origem) return;
-    counts[p.origem] = (counts[p.origem]||0)+1;
-  });
-  const chips = Object.entries(counts)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,6)
-    .map(([k,v])=> `<span class="chip">${k}: <b>${v}</b></span>`).join("");
-  byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
-}
+        const byId = id => document.getElementById(id);
+        const fmtDate = iso => { if (!iso) return ""; const d = new Date(iso); if (Number.isNaN(d)) return iso; return d.toLocaleDateString("pt-BR"); };
+        const parseDate = v => { const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
+        const sanitizePhone = v => (v || "").replace(/[^\d]/g, "");
+        const formatPhoneBR = v => { const d = sanitizePhone(v); if (d.length < 10) return v || ""; const dd = d.length === 11 ? d.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3") : d.replace(/^(\d{2})(\d{4})(\d{4}).*/, "($1) $2-$3"); return dd; };
+        const whatsappLink = v => { const d = sanitizePhone(v); if (d.length < 10) return null; return `https://wa.me/55${d}`; };
+        const uid = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+        const compare = (a, b, f) => { const va = (a?.[f] ?? "").toString().toLowerCase(); const vb = (b?.[f] ?? "").toString().toLowerCase(); if (va < vb) return -1; if (va > vb) return 1; return 0; };
 
-/* ===== CRUD ===== */
-function openModal(edit=false){
-  byId("dlgTitle").textContent = edit ? "Editar pessoa" : "Nova pessoa";
-  byId("errors").style.display="none";
-  byId("frm").reset?.();
-  byId("dlg").showModal();
-}
-function closeModal(){ byId("dlg").close(); }
+        function populateOrigemSelects() {
+            const sel = byId("fOrigem");
+            sel.innerHTML = ORIGENS.map(o => `<option>${o}</option>`).join("");
+            const f = byId("filterOrigem");
+            f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option>${o}</option>`).join("");
+        }
 
-function onCreate(){
-  editingId = null;
-  byId("fNome").value = "";
-  byId("fSexo").value = "";
-  byId("fIdade").value = "";
-  byId("fEndereco").value = "";
-  byId("fTelefone").value = "";
-  byId("fEmail").value = "";
-  byId("fOrigem").value = ORIGENS[0];
-  byId("fDiscipulador").value = "";
-  byId("fDataInicio").valueAsDate = new Date();
-  openModal(false);
-}
-function onEdit(id){
-  const p = pessoas.find(x=>x.id===id);
-  if(!p) return;
-  editingId = id;
-  byId("fNome").value = p.nome || "";
-  byId("fSexo").value = p.sexo || "";
-  byId("fIdade").value = p.idade ?? "";
-  byId("fEndereco").value = p.endereco || "";
-  byId("fTelefone").value = p.telefone || "";
-  byId("fEmail").value = p.email || "";
-  byId("fOrigem").value = p.origem || ORIGENS[0];
-  byId("fDiscipulador").value = p.discipulador || "";
-  if (p.dataInicio) {
-    const d = new Date(p.dataInicio);
-    byId("fDataInicio").value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  } else {
-    byId("fDataInicio").value = "";
-  }
-  openModal(true);
-}
-function onDelete(id){
-  const p = pessoas.find(x=>x.id===id);
-  if(!p) return;
-  if(confirm(`Excluir "${p.nome}"? Esta ação não pode ser desfeita.`)){
-    pessoas = pessoas.filter(x=>x.id!==id);
-    saveLocal(); renderTable();
-  }
-}
+        function renderTable() {
+            const tbody = document.querySelector("#tbl tbody");
+            const q = byId("q").value.trim().toLowerCase();
+            const filtroOrigem = byId("filterOrigem").value;
+            const filtroDiscip = byId("filterDiscipulador").value.trim().toLowerCase();
+            const filtroSexo = byId("filterSexo").value;
 
-function validateForm(data){
-  const errs = [];
-  if(!data.nome || data.nome.trim().length < 2) errs.push("Informe um nome válido.");
-  if(!data.sexo) errs.push("Selecione o sexo.");
-  if(data.idade !== "" && (isNaN(+data.idade) || +data.idade < 0 || +data.idade > 120)) errs.push("Idade inválida.");
-  if(data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.push("E-mail inválido.");
-  if(!data.origem) errs.push("Selecione a origem.");
-  if(!data.dataInicio) errs.push("Informe a data de início.");
-  return errs;
-}
+            let list = [...pessoas];
 
-function onSave(e){
-  e?.preventDefault?.();
-  const data = {
-    id: editingId || uid(),
-    nome: byId("fNome").value.trim(),
-    sexo: byId("fSexo").value,
-    idade: byId("fIdade").value?.trim() || "",
-    endereco: byId("fEndereco").value.trim(),
-    telefone: byId("fTelefone").value.trim(),
-    email: byId("fEmail").value.trim(),
-    origem: byId("fOrigem").value,
-    discipulador: byId("fDiscipulador").value.trim(),
-    dataInicio: parseDate(byId("fDataInicio").value)
-  };
-  const errs = validateForm(data);
-  const box = byId("errors");
-  if (errs.length){
-    box.textContent = errs.join(" ");
-    box.style.display = "block";
-    return;
-  } else {
-    box.style.display = "none";
-  }
-  if (editingId){
-    const idx = pessoas.findIndex(x=>x.id===editingId);
-    pessoas[idx] = {...pessoas[idx], ...data};
-  } else {
-    pessoas.unshift(data);
-  }
-  saveLocal(); renderTable(); closeModal();
-}
+            if (q) {
+                const qDigits = q.replace(/[^\d]/g, "");
+                list = list.filter(p => (p.nome || "").toLowerCase().includes(q) || (p.email || "").toLowerCase().includes(q) || sanitizePhone(p.telefone).includes(qDigits));
+            }
+            if (filtroOrigem) list = list.filter(p => p.origem === filtroOrigem);
+            if (filtroDiscip) list = list.filter(p => (p.discipulador || "").toLowerCase().includes(filtroDiscip));
+            if (filtroSexo) list = list.filter(p => p.sexo === filtroSexo);
 
-/* ===== Import/Export/Seed/Wipe ===== */
-function exportJSON(){
-  const blob = new Blob([JSON.stringify(pessoas, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "pessoas.json"; a.click();
-  URL.revokeObjectURL(url);
-}
-function importJSON(file){
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const data = JSON.parse(reader.result);
-      if (!Array.isArray(data)) throw new Error("Formato inválido");
-      // normaliza ids faltantes
-      pessoas = data.map(p => ({ id: p.id || uid(), ...p }));
-      saveLocal(); renderTable();
-      alert("Importação concluída.");
-    }catch(err){
-      alert("Falha ao importar: " + err.message);
-    }
-  };
-  reader.readAsText(file);
-}
-function seed(){
-  if(!confirm("Inserir dados de exemplo?")) return;
-  const today = new Date();
-  const iso = d => new Date(d).toISOString();
-  const addDays = (n)=> new Date(today.getTime()+ n*86400000);
-  pessoas = [
-    {id:uid(), nome:"Ana Souza", sexo:"Feminino", idade:29, endereco:"Rua das Flores, 123 - Centro, Curitiba",
-     telefone:"(41) 99876-1234", email:"ana.souza@email.com", origem:"Mídias sociais", discipulador:"Priscila",
-     dataInicio: iso(addDays(-3))},
-    {id:uid(), nome:"Carlos Lima", sexo:"Masculino", idade:35, endereco:"Av. Brasil, 450 - Vila Bela, São Paulo",
-     telefone:"(11) 91234-5678", email:"carlos.lima@email.com", origem:"Indicação de amigo(a)", discipulador:"João",
-     dataInicio: iso(addDays(-15))},
-    {id:uid(), nome:"Beatriz Almeida", sexo:"Feminino", idade:22, endereco:"Rua 7 de Setembro, 77 - Porto Alegre",
-     telefone:"(51) 99111-2233", email:"", origem:"Evento/Conferência", discipulador:"Marina",
-     dataInicio: iso(addDays(-40))},
-    {id:uid(), nome:"Rafael Santos", sexo:"Masculino", idade:41, endereco:"Av. Atlântica, 900 - Rio de Janeiro",
-     telefone:"(21) 98888-0000", email:"rafa.santos@email.com", origem:"Conversão", discipulador:"Pedro",
-     dataInicio: iso(addDays(-1))},
-    {id:uid(), nome:"João Pedro", sexo:"Masculino", idade:19, endereco:"Rua A, 10 - Recife",
-     telefone:"(81) 98765-4321", email:"", origem:"Projeto social", discipulador:"Lucas",
-     dataInicio: iso(addDays(-5))}
-  ];
-  saveLocal(); renderTable();
-}
-function wipe(){
-  if(confirm("Tem certeza que deseja apagar TODOS os registros?")){
-    pessoas = []; saveLocal(); renderTable();
-  }
-}
+            // Ordenação
+            list.sort((a, b) => {
+                const f = sort.field;
+                if (f === "dataInicio") {
+                    const va = a.dataInicio || "";
+                    const vb = b.dataInicio || "";
+                    return sort.dir === "asc" ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                const r = compare(a, b, f);
+                return sort.dir === "asc" ? r : -r;
+            });
 
-/* ===== Eventos ===== */
-function attachEvents(){
-  byId("btnAdd").addEventListener("click", onCreate);
-  byId("btnClose").addEventListener("click", closeModal);
-  byId("btnCancel").addEventListener("click", closeModal);
-  byId("frm").addEventListener("submit", onSave);
+            tbody.innerHTML = list.map(p => {
+                const telFmt = formatPhoneBR(p.telefone);
+                const wpp = whatsappLink(p.telefone);
+                const sexoTag = p.sexo === "Masculino" ? "m" : p.sexo === "Feminino" ? "f" : "o";
+                return `<tr>
+                      <td><div style="display:flex;flex-direction:column"><strong>${p.nome || ""}</strong><span class="mono">${(p.id || "").slice(0, 8)}</span></div></td>
+                      <td>${p.sexo || ""}</td>
+                      <td>${p.idade ?? ""}</td>
+                      <td>${p.endereco ?? ""}</td>
+                      <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">Abrir WhatsApp</a></div>` : ""}</td>
+                      <td>${p.email ?? ""}</td>
+                      <td>${p.origem ?? ""}</td>
+                      <td>${p.discipulador ?? ""}</td>
+                      <td class="nowrap">${fmtDate(p.dataInicio)}</td>
+                      <td class="nowrap">
+                        <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
+                        <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
+                      </td>
+                    </tr>`;
+            }).join("");
 
-  byId("q").addEventListener("input", renderTable);
-  byId("filterOrigem").addEventListener("change", renderTable);
-  byId("filterDiscipulador").addEventListener("input", renderTable);
-  byId("filterSexo").addEventListener("change", renderTable);
-  byId("btnClearFilters").addEventListener("click", () => {
-    byId("q").value=""; byId("filterOrigem").value=""; byId("filterDiscipulador").value=""; byId("filterSexo").value="";
-    renderTable();
-  });
+            updateKPIs(list);
+        }
 
-  byId("btnExport").addEventListener("click", exportJSON);
-  byId("btnImport").addEventListener("click", ()=> importJSON(byId("importFile").files?.[0]));
-  byId("btnSeed").addEventListener("click", seed);
-  byId("btnWipe").addEventListener("click", wipe);
+        function updateKPIs(currentList) {
+            byId("kpiTotal").textContent = pessoas.length;
+            const masc = pessoas.filter(p => p.sexo === "Masculino").length;
+            const fem = pessoas.filter(p => p.sexo === "Feminino").length;
+            const out = pessoas.filter(p => p.sexo === "Outro").length;
+            byId("kpiMasc").textContent = masc; byId("kpiFem").textContent = fem; byId("kpiOut").textContent = out;
+            const withWpp = pessoas.filter(p => sanitizePhone(p.telefone).length >= 10).length;
+            byId("kpiWpp").textContent = withWpp;
+            const now = new Date();
+            const last30 = pessoas.filter(p => { if (!p.dataInicio) return false; const d = new Date(p.dataInicio); return (now - d) <= (30 * 24 * 60 * 60 * 1000); }).length;
+            byId("kpi30").textContent = last30;
 
-  // Ordenação por cabeçalho (Nome e Início)
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    //th.style.cursor="pointer";
-    th.title="Clique para ordenar";
-    th.addEventListener("click", () => {
-      const f = th.dataset.sort;
-      sort = { field: f, dir: (sort.field===f && sort.dir==="asc") ? "desc" : "asc" };
-      renderTable();
-    });
-  });
+            const counts = {};
+            (currentList || pessoas).forEach(p => { if (!p.origem) return; counts[p.origem] = (counts[p.origem] || 0) + 1; });
+            const chips = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k, v]) => `<span style="background:var(--bg2); color:var(--text); padding:6px 8px; border-radius:999px; margin-right:6px">${k}: <b>${v}</b></span>`).join("");
+            byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
+        }
 
-  // máscara simples ao sair do campo telefone
-  byId("fTelefone").addEventListener("blur", (e)=>{
-    e.target.value = formatPhoneBR(e.target.value);
-  });
-}
+        
 
-/* ===== Boot ===== */
-(function init(){
-  populateOrigemSelects();
-  loadLocal();
-  attachEvents();
-  renderTable();
-})();
-</script>
+        // path base: users/{uid}/pessoas
+        function pessoasCollectionRef() {
+            if (!currentUser) throw new Error("Usuário não autenticado");
+            return collection(db, `users/${currentUser.uid}/pessoas`);
+        }
+
+        async function loadPessoasFromFirestore() {
+            if (!currentUser) return;
+            pessoas = [];
+            try {
+                const q = query(pessoasCollectionRef(), orderBy("nome"));
+                const snap = await getDocs(q);
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    pessoas.push({
+                        id: docSnap.id,
+                        nome: data.nome,
+                        sexo: data.sexo,
+                        idade: data.idade,
+                        endereco: data.endereco,
+                        telefone: data.telefone,
+                        email: data.email,
+                        origem: data.origem,
+                        discipulador: data.discipulador,
+                        dataInicio: data.dataInicio ? data.dataInicio : null
+                    });
+                });
+                renderTable();
+            } catch (err) {
+                console.error("Erro ao carregar pessoas:", err);
+                alert("Falha ao carregar dados: " + err.message);
+            }
+        }
+
+        async function savePessoaToFirestore(p) {
+            if (!currentUser) throw new Error("Usuário não autenticado");
+            try {
+                const pCol = pessoasCollectionRef();
+                if (!p.id) {
+                    // add
+                    const toAdd = { ...p };
+                    const docRef = await addDoc(pCol, {
+                        nome: toAdd.nome || "",
+                        sexo: toAdd.sexo || "",
+                        idade: toAdd.idade || null,
+                        endereco: toAdd.endereco || "",
+                        telefone: toAdd.telefone || "",
+                        email: toAdd.email || "",
+                        origem: toAdd.origem || "",
+                        discipulador: toAdd.discipulador || "",
+                        dataInicio: toAdd.dataInicio || null
+                    });
+                    p.id = docRef.id;
+                } else {
+                    // set (replace fields)
+                    const docRef = doc(db, `users/${currentUser.uid}/pessoas/${p.id}`);
+                    await setDoc(docRef, {
+                        nome: p.nome || "",
+                        sexo: p.sexo || "",
+                        idade: p.idade || null,
+                        endereco: p.endereco || "",
+                        telefone: p.telefone || "",
+                        email: p.email || "",
+                        origem: p.origem || "",
+                        discipulador: p.discipulador || "",
+                        dataInicio: p.dataInicio || null
+                    }, { merge: true });
+                }
+                await loadPessoasFromFirestore();
+            } catch (err) {
+                console.error("savePessoaToFirestore error:", err);
+                alert("Erro ao salvar: " + err.message);
+            }
+        }
+
+        async function deletePessoaFromFirestore(id) {
+            if (!currentUser) throw new Error("Usuário não autenticado");
+            try {
+                const docRef = doc(db, `users/${currentUser.uid}/pessoas/${id}`);
+                await deleteDoc(docRef);
+                await loadPessoasFromFirestore();
+            } catch (err) {
+                console.error("delete error:", err);
+                alert("Erro ao excluir: " + err.message);
+            }
+        }
+
+        /* ===== CRUD UI glue (similar ao original) ===== */
+        function openModal(edit = false) { byId("dlgTitle").textContent = edit ? "Editar pessoa" : "Nova pessoa"; byId("errors").style.display = "none"; byId("frm").reset?.(); byId("dlg").showModal(); }
+        function closeModal() { byId("dlg").close(); }
+
+        function onCreate() {
+            editingId = null;
+            byId("fNome").value = ""; byId("fSexo").value = ""; byId("fIdade").value = ""; byId("fEndereco").value = "";
+            byId("fTelefone").value = ""; byId("fEmail").value = ""; byId("fOrigem").value = ORIGENS[0]; byId("fDiscipulador").value = "";
+            byId("fDataInicio").valueAsDate = new Date();
+            openModal(false);
+        }
+
+        function onEdit(id) {
+            const p = pessoas.find(x => x.id === id);
+            if (!p) return;
+            editingId = id;
+            byId("fNome").value = p.nome || "";
+            byId("fSexo").value = p.sexo || "";
+            byId("fIdade").value = p.idade ?? "";
+            byId("fEndereco").value = p.endereco || "";
+            byId("fTelefone").value = p.telefone || "";
+            byId("fEmail").value = p.email || "";
+            byId("fOrigem").value = p.origem || ORIGENS[0];
+            byId("fDiscipulador").value = p.discipulador || "";
+            if (p.dataInicio) {
+                const d = new Date(p.dataInicio);
+                byId("fDataInicio").value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            } else byId("fDataInicio").value = "";
+            openModal(true);
+        }
+
+        async function onDelete(id) {
+            const p = pessoas.find(x => x.id === id);
+            if (!p) return;
+            if (confirm(`Excluir "${p.nome}"? Esta ação não pode ser desfeita.`)) {
+                await deletePessoaFromFirestore(id);
+            }
+        }
+
+        function validateForm(data) {
+            const errs = [];
+            if (!data.nome || data.nome.trim().length < 2) errs.push("Informe um nome válido.");
+            if (!data.sexo) errs.push("Selecione o sexo.");
+            if (data.idade !== "" && (isNaN(+data.idade) || +data.idade < 0 || +data.idade > 120)) errs.push("Idade inválida.");
+            if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.push("E-mail inválido.");
+            if (!data.origem) errs.push("Selecione a origem.");
+            if (!data.dataInicio) errs.push("Informe a data de início.");
+            return errs;
+        }
+
+        async function onSave(e) {
+            e?.preventDefault?.();
+            const data = {
+                id: editingId || null,
+                nome: byId("fNome").value.trim(),
+                sexo: byId("fSexo").value,
+                idade: byId("fIdade").value?.trim() || "",
+                endereco: byId("fEndereco").value.trim(),
+                telefone: byId("fTelefone").value.trim(),
+                email: byId("fEmail").value.trim(),
+                origem: byId("fOrigem").value,
+                discipulador: byId("fDiscipulador").value.trim(),
+                dataInicio: parseDate(byId("fDataInicio").value)
+            };
+            const errs = validateForm(data);
+            const box = byId("errors");
+            if (errs.length) {
+                box.textContent = errs.join(" ");
+                box.style.display = "block";
+                return;
+            } else box.style.display = "none";
+
+            await savePessoaToFirestore(data);
+            closeModal();
+        }
+
+        /* ===== Import/Export/Seed/Wipe (atuam sobre coleção do usuário) ===== */
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(pessoas, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = "pessoas.json"; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importJSON(file) {
+            if (!file) { alert("Selecione um arquivo JSON."); return; }
+            const reader = new FileReader();
+            reader.onload = async () => {
+                try {
+                    const data = JSON.parse(reader.result);
+                    if (!Array.isArray(data)) throw new Error("Formato inválido");
+                    if (!confirm(`Importar ${data.length} registros para seu usuário atual?`)) return;
+                    // adicionar como novos docs
+                    for (const p of data) {
+                        const toAdd = {
+                            nome: p.nome || "",
+                            sexo: p.sexo || "",
+                            idade: p.idade || null,
+                            endereco: p.endereco || "",
+                            telefone: p.telefone || "",
+                            email: p.email || "",
+                            origem: p.origem || "",
+                            discipulador: p.discipulador || "",
+                            dataInicio: p.dataInicio || null
+                        };
+                        await addDoc(pessoasCollectionRef(), toAdd);
+                    }
+                    await loadPessoasFromFirestore();
+                    alert("Importação concluída.");
+                } catch (err) {
+                    alert("Falha ao importar: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function seed() {
+            if (!confirm("Inserir dados de exemplo na sua coleção?")) return;
+            const today = new Date();
+            const iso = d => new Date(d).toISOString();
+            const addDays = (n) => new Date(today.getTime() + n * 86400000);
+            const examples = [
+                { nome: "Ana Souza", sexo: "Feminino", idade: 29, endereco: "Rua das Flores, 123 - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)) },
+                { nome: "Carlos Lima", sexo: "Masculino", idade: 35, endereco: "Av. Brasil, 450 - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)) },
+                { nome: "Beatriz Almeida", sexo: "Feminino", idade: 22, endereco: "Rua 7 de Setembro, 77 - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)) },
+                { nome: "Rafael Santos", sexo: "Masculino", idade: 41, endereco: "Av. Atlântica, 900 - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)) },
+                { nome: "João Pedro", sexo: "Masculino", idade: 19, endereco: "Rua A, 10 - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)) }
+            ];
+            for (const ex of examples) {
+                await addDoc(pessoasCollectionRef(), ex);
+            }
+            await loadPessoasFromFirestore();
+        }
+
+        async function wipe() {
+            if (!confirm("Tem certeza que deseja apagar TODOS os registros da sua coleção? Esta ação não pode ser desfeita.")) return;
+            // apagar em batch (Firestore não tem deleteMany; usamos batch)
+            try {
+                const snap = await getDocs(pessoasCollectionRef());
+                const batch = writeBatch(db);
+                snap.forEach(d => batch.delete(doc(db, `users/${currentUser.uid}/pessoas/${d.id}`)));
+                await batch.commit();
+                await loadPessoasFromFirestore();
+            } catch (err) {
+                console.error("wipe error:", err);
+                alert("Erro ao apagar: " + err.message);
+            }
+        }
+
+        /* ===== Eventos e boot ===== */
+
+        function attachEvents() {
+            byId("btnAdd").addEventListener("click", onCreate);
+            byId("btnClose").addEventListener("click", closeModal);
+            byId("btnCancel").addEventListener("click", closeModal);
+            byId("frm").addEventListener("submit", onSave);
+
+            byId("q").addEventListener("input", renderTable);
+            byId("filterOrigem").addEventListener("change", renderTable);
+            byId("filterDiscipulador").addEventListener("input", renderTable);
+            byId("filterSexo").addEventListener("change", renderTable);
+            byId("btnClearFilters").addEventListener("click", () => { byId("q").value = ""; byId("filterOrigem").value = ""; byId("filterDiscipulador").value = ""; byId("filterSexo").value = ""; renderTable(); });
+
+            byId("btnExport").addEventListener("click", exportJSON);
+            byId("btnImport").addEventListener("click", () => importJSON(byId("importFile").files?.[0]));
+            byId("btnSeed").addEventListener("click", seed);
+            byId("btnWipe").addEventListener("click", wipe);
+
+            document.querySelectorAll("th[data-sort]").forEach(th => {
+                th.title = "Clique para ordenar";
+                th.addEventListener("click", () => {
+                    const f = th.dataset.sort;
+                    sort = { field: f, dir: (sort.field === f && sort.dir === "asc") ? "desc" : "asc" };
+                    renderTable();
+                });
+            });
+
+            byId("fTelefone").addEventListener("blur", e => e.target.value = formatPhoneBR(e.target.value));
+
+            // auth buttons
+            byId("btnSignIn").addEventListener("click", async () => {
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (err) { console.error("signin error", err); alert("Erro no login: " + err.message); }
+            });
+            byId("btnSignOut").addEventListener("click", async () => {
+                await signOut(auth);
+            });
+        }
+
+        // auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            const notAuth = byId("notAuth"), dashboard = byId("dashboard"), userEmail = byId("userEmail"), btnSignIn = byId("btnSignIn"), btnSignOut = byId("btnSignOut");
+            if (user) {
+                userEmail.textContent = user.email || user.displayName || "";
+                btnSignIn.style.display = "none"; btnSignOut.style.display = "inline-block";
+                notAuth.style.display = "none"; dashboard.classList.remove("hidden");
+                userBasePath = `users/${user.uid}/pessoas`;
+                populateOrigemSelects();
+                await loadPessoasFromFirestore();
+            } else {
+                userEmail.textContent = "";
+                btnSignIn.style.display = "inline-block"; btnSignOut.style.display = "none";
+                notAuth.style.display = "block"; dashboard.classList.add("hidden");
+                pessoas = []; renderTable();
+            }
+        });
+
+        // boot
+        (function init() {
+            populateOrigemSelects();
+            attachEvents();
+        })();
+
+        // expose some functions to global scope because table buttons call them inline
+        window.onEdit = onEdit;
+        window.onDelete = (id) => onDelete(id);
+    </script>
 </body>
 </html>
