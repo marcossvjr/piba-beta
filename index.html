@@ -762,7 +762,7 @@
             currentUser = user;
             const notAuth = byId("notAuth"), dashboard = byId("dashboard"), userEmail = byId("userEmail"), btnSignIn = byId("btnSignIn"), btnSignOut = byId("btnSignOut");
             if (user) {
-                userEmail.textContent = user.email || user.displayName || "";
+                userEmail.textContent = user.displayName || user.email || "";
                 btnSignIn.style.display = "none"; btnSignOut.style.display = "inline-block";
                 notAuth.style.display = "none"; dashboard.classList.remove("hidden");
                 userBasePath = `users/${user.uid}/pessoas`;
