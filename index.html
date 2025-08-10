@@ -448,7 +448,7 @@
                       <td>${p.sexo || ""}</td>
                       <td>${p.idade ?? ""}</td>
                       <td>${p.endereco ?? ""}</td>
-                      <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">Abrir WhatsApp</a></div>` : ""}</td>
+                      <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">WhatsApp</a></div>` : ""}</td>
                       <td>${p.email ?? ""}</td>
                       <td>${p.origem ?? ""}</td>
                       <td>${p.discipulador ?? ""}</td>
@@ -468,8 +468,6 @@
             const masc = pessoas.filter(p => p.sexo === "Masculino").length;
             const fem = pessoas.filter(p => p.sexo === "Feminino").length;
             byId("kpiMasc").textContent = masc; byId("kpiFem").textContent = fem;
-            const withWpp = pessoas.filter(p => sanitizePhone(p.telefone).length >= 10).length;
-            byId("kpiWpp").textContent = withWpp;
             const now = new Date();
             const last30 = pessoas.filter(p => { if (!p.dataInicio) return false; const d = new Date(p.dataInicio); return (now - d) <= (30 * 24 * 60 * 60 * 1000); }).length;
             byId("kpi30").textContent = last30;
