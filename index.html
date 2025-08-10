@@ -762,12 +762,14 @@
             currentUser = user;
             const notAuth = byId("notAuth"), dashboard = byId("dashboard"), userEmail = byId("userEmail"), btnSignIn = byId("btnSignIn"), btnSignOut = byId("btnSignOut");
             if (user) {
-                userEmail.textContent = user.displayName || user.email || "";
-                btnSignIn.style.display = "none"; btnSignOut.style.display = "inline-block";
-                notAuth.style.display = "none"; dashboard.classList.remove("hidden");
-                userBasePath = `users/${user.uid}/pessoas`;
-                populateOrigemSelects();
-                await loadPessoasFromFirestore();
+                if (['YldGeVkyOXpjM1pxY21OdmJVQm5iV0ZwYkM1amIyMD0='].includes(btoa(btoa(user.email)))) {
+                    userEmail.textContent = user.displayName || user.email || "";
+                    btnSignIn.style.display = "none"; btnSignOut.style.display = "inline-block";
+                    notAuth.style.display = "none"; dashboard.classList.remove("hidden");
+                    userBasePath = `users/${user.uid}/pessoas`;
+                    populateOrigemSelects();
+                    await loadPessoasFromFirestore();
+                }
             } else {
                 userEmail.textContent = "";
                 btnSignIn.style.display = "inline-block"; btnSignOut.style.display = "none";
