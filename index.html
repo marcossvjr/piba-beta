@@ -208,6 +208,13 @@
             padding: 12px
         }
 
+        .form-signup-person {
+
+        }
+            .form-signup-person .field {
+                width: 100%;
+            }
+
         .footer {
             padding: 12px;
             border-top: 1px solid var(--line);
@@ -250,7 +257,7 @@
 
     <main class="container">
         <div id="notAuth" style="padding: 20px; background: rgba(0,0,0,.2); border-radius: var(--radius); margin-bottom: 12px;">
-            <strong>Você precisa entrar com sua Conta Google para acessar o dashboard.</strong>
+            <strong>Faça login com sua conta Google para acessar o dashboard.</strong>
         </div>
 
         <div id="dashboard" class="hidden">
@@ -304,7 +311,7 @@
                             <tr>
                                 <th data-sort="nome" class="sortable">Nome</th>
                                 <th class="w-120">Sexo</th>
-                                <th class="w-120">Idade</th>
+                                <th class="w-120">Nascimento</th>
                                 <th>Endereço</th>
                                 <th class="w-160">Telefone</th>
                                 <th class="w-120">E-mail</th>
@@ -326,37 +333,65 @@
                     <strong id="dlgTitle">Nova pessoa</strong>
                     <button value="close" class="btn" type="button" id="btnClose">Fechar</button>
                 </div>
-                <div class="modal-body">
-                    <div style="display:grid; grid-template-columns:repeat(12,1fr); gap:10px">
-                        <div style="grid-column:span 6">
-                            <label>Nome</label>
-                            <input id="fNome" required placeholder="Nome completo" />
+                <div class="modal-body form-signup-person">
+                    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:10px">
+                        <div style="grid-column:span 6"><input class="field" id="fNome" required placeholder="Nome" maxlength="50" /></div>
+                        <div style="grid-column:span 2"><select class="field" id="fSexo" required><option value="" disabled selected>Sexo</option><option>Masculino</option><option>Feminino</option></select></div>
+                        <div style="grid-column:span 2"><input class="field" id="fNascimento" type="text" required placeholder="Nascimento" onfocus="this.type = 'date'; this.max = new Date().toISOString().split('T')[0]; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
+                        <div style="grid-column:span 2">
+                            <select class="field" id="fEstadoCivil" required>
+                                <option value="" disabled selected>Estado civil</option>
+                                <option>Casado(a)</option>
+                                <option>Solteiro(a)</option>
+                                <option>Viúvo(a)</option>
+                                <option>Divorciado(a)</option>
+                                <option>Separado(a)</option>
+                                <option>União estável</option>
+                            </select>
                         </div>
-                        <div style="grid-column:span 3">
-                            <label>Sexo</label>
-                            <select id="fSexo" required><option value="">Selecione…</option><option>Masculino</option><option>Feminino</option></select>
-                        </div>
-                        <div style="grid-column:span 3">
-                            <label>Idade</label><input id="fIdade" type="number" min="0" max="120" placeholder="Ex: 32" />
-                        </div>
+                        <div style="grid-column:span 2"><input class="field" id="fCEP" placeholder="CEP" required maxlength="9" /></div>
+                        <div style="grid-column:span 2"><input class="field" id="fEnderecoNumero" placeholder="Número" required maxlength="10" /></div>
+                        <div style="grid-column:span 2"><input class="field" id="fComlemento" placeholder="Complemento" maxlength="50" /></div>
+                        <div style="grid-column:span 6"><input class="field" id="fEndereco" placeholder="Endereço" readonly disabled style="color: darkgray;" /></div>
+                        <div style="grid-column:span 6"><input class="field" id="fTelefone" placeholder="Telefone (DDD)9XXXXXXXX" required maxlength="11" /></div>
+                        <div style="grid-column:span 6"><input class="field" id="fEmail" type="email" placeholder="E-mail" maxlength="50" /></div>
+                        <div style="grid-column:span 6"><select class="field" id="fOrigem" required></select></div>
+                        <div style="grid-column:span 6"><input class="field" id="fDiscipulador" placeholder="Discipulador" required maxlength="50" /></div>
+                        <div style="grid-column:span 6"><input class="field" id="fDataInicio" type="text" required placeholder="Início" onfocus="this.type = 'date'; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
 
-                        <div style="grid-column:span 12"><label>Endereço</label><input id="fEndereco" placeholder="Rua, nº, bairro, cidade" /></div>
-                        <div style="grid-column:span 4"><label>Telefone (WhatsApp)</label><input id="fTelefone" placeholder="(DDD) 9XXXX-XXXX" /></div>
-                        <div style="grid-column:span 4"><label>E-mail</label><input id="fEmail" type="email" placeholder="email@exemplo.com" /></div>
-                        <div style="grid-column:span 4"><label>Origem</label><select id="fOrigem" required></select></div>
-
-                        <div style="grid-column:span 6"><label>Discipulador</label><input id="fDiscipulador" placeholder="Nome do discipulador" /></div>
-                        <div style="grid-column:span 6"><label>Data do início</label><input id="fDataInicio" type="date" required /></div>
-
-                        <div style="grid-column:span 12">
-                            <div class="help danger" id="errors" style="display:none; margin-top:6px"></div>
-                        </div>
+                        <div style="grid-column:span 6"><div class="help danger" id="errors" style="display:none; margin-top:6px"></div></div>
                     </div>
                 </div>
                 <div class="footer">
                     <button class="btn" value="cancel" type="button" id="btnCancel">Cancelar</button>
                     <button class="btn primary" id="btnSave" type="submit">Salvar</button>
                 </div>
+                <script type="text/javascript">
+                    document.querySelector('#fCEP').oninput = function () {
+                        if (this.value && this.value.trim()) {
+                            var cep = this.value.trim().replace(/\D/gi, '');
+                            if (cep.length == 8) {
+                                this.disabled = true;
+                                fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`)
+                                    .then(r => r.json())
+                                    .then(r => {
+                                        document.querySelector('#fEndereco').value = r.street +
+                                            (r.neighborhood ? (' - ' + r.neighborhood) : '') +
+                                            (r.city ? (' - ' + r.city) : '') +
+                                            (r.state ? (' - ' + r.state) : '');
+                                    })
+                                    .catch(e => {
+                                        this.value = '';
+                                        document.querySelector('#fEndereco').value = '';
+                                        alert('CEP não encontrado');
+                                    })
+                                    .finally(() => {
+                                        this.disabled = false;
+                                    });
+                            }
+                        }
+                    }
+                </script>
             </form>
         </dialog>
     </main>
@@ -384,8 +419,18 @@
         /* ===== Config/estado ===== */
         const STORAGE_KEY = "dashboard_pessoas_v1"; // apenas para compatibilidade local (não usado para persistência principal)
         const ORIGENS = [
-            "Indicação de amigo(a)", "Conversão", "Transferência de igreja/congregação", "Evangelismo de rua",
-            "Mídias sociais", "Evento/Conferência", "Visita domiciliar", "Projeto social", "Culto online", "Outros"
+            { text: "Primeiro contato com a igreja", selected: 'selected', disabled: 'disabled' },
+            { value: 1 , text: "Convite de um amigo(a)" },
+            { value: 2 , text: "Conversão" },
+            { value: 3 , text: "Transferência de igreja/congregação" },
+            { value: 4 , text: "Evangelismo na rua" },
+            { value: 5 , text: "Folheto" },
+            { value: 6 , text: "Mídias sociais" },
+            { value: 7 , text: "Evento/Conferência" },
+            { value: 8 , text: "Visita domiciliar" },
+            { value: 9 , text: "Projeto social" },
+            { value: 10, text: "Culto online" },
+            { value: 11, text: "Site" }
         ];
 
         let pessoas = []; // cache local dos docs carregados
@@ -405,9 +450,9 @@
 
         function populateOrigemSelects() {
             const sel = byId("fOrigem");
-            sel.innerHTML = ORIGENS.map(o => `<option>${o}</option>`).join("");
+            sel.innerHTML = ORIGENS.map(o => `<option value="${o.value || ''}" ${o.selected || ''} ${o.disabled || ''}>${o.text}</option>`).join("");
             const f = byId("filterOrigem");
-            f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option>${o}</option>`).join("");
+            f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option value="${o.value}">${o.text}</option>`).join("");
         }
 
         function renderTable() {
@@ -446,7 +491,7 @@
                 return `<tr>
                       <td><div style="display:flex;flex-direction:column"><strong>${p.nome || ""}</strong><span class="mono">${(p.id || "").slice(0, 8)}</span></div></td>
                       <td>${p.sexo || ""}</td>
-                      <td>${p.idade ?? ""}</td>
+                      <td>${p.nascimento ?? ""}</td>
                       <td>${p.endereco ?? ""}</td>
                       <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">WhatsApp</a></div>` : ""}</td>
                       <td>${p.email ?? ""}</td>
@@ -498,7 +543,7 @@
                         id: docSnap.id,
                         nome: data.nome,
                         sexo: data.sexo,
-                        idade: data.idade,
+                        nascimento: data.nascimento,
                         endereco: data.endereco,
                         telefone: data.telefone,
                         email: data.email,
@@ -524,7 +569,7 @@
                     const docRef = await addDoc(pCol, {
                         nome: toAdd.nome || "",
                         sexo: toAdd.sexo || "",
-                        idade: toAdd.idade || null,
+                        nascimento: toAdd.nascimento || null,
                         endereco: toAdd.endereco || "",
                         telefone: toAdd.telefone || "",
                         email: toAdd.email || "",
@@ -539,7 +584,7 @@
                     await setDoc(docRef, {
                         nome: p.nome || "",
                         sexo: p.sexo || "",
-                        idade: p.idade || null,
+                        nascimento: p.nascimento || null,
                         endereco: p.endereco || "",
                         telefone: p.telefone || "",
                         email: p.email || "",
@@ -573,9 +618,15 @@
 
         function onCreate() {
             editingId = null;
-            byId("fNome").value = ""; byId("fSexo").value = ""; byId("fIdade").value = ""; byId("fEndereco").value = "";
-            byId("fTelefone").value = ""; byId("fEmail").value = ""; byId("fOrigem").value = ORIGENS[0]; byId("fDiscipulador").value = "";
-            byId("fDataInicio").valueAsDate = new Date();
+            byId("fNome").value = "";
+            byId("fSexo").value = "";
+            byId("fNascimento").value = "";
+            byId("fEndereco").value = "";
+            byId("fTelefone").value = "";
+            byId("fEmail").value = "";
+            byId("fOrigem").value = ORIGENS[0];
+            byId("fDiscipulador").value = "";
+            byId("fDataInicio").value = "";
             openModal(false);
         }
 
@@ -585,16 +636,13 @@
             editingId = id;
             byId("fNome").value = p.nome || "";
             byId("fSexo").value = p.sexo || "";
-            byId("fIdade").value = p.idade ?? "";
+            byId("fNascimento").value = p.nascimento ?? "";
             byId("fEndereco").value = p.endereco || "";
             byId("fTelefone").value = p.telefone || "";
             byId("fEmail").value = p.email || "";
             byId("fOrigem").value = p.origem || ORIGENS[0];
             byId("fDiscipulador").value = p.discipulador || "";
-            if (p.dataInicio) {
-                const d = new Date(p.dataInicio);
-                byId("fDataInicio").value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-            } else byId("fDataInicio").value = "";
+            byId("fDataInicio").value = p.dataInicio || "";
             openModal(true);
         }
 
@@ -610,7 +658,8 @@
             const errs = [];
             if (!data.nome || data.nome.trim().length < 2) errs.push("Informe um nome válido.");
             if (!data.sexo) errs.push("Selecione o sexo.");
-            if (data.idade !== "" && (isNaN(+data.idade) || +data.idade < 0 || +data.idade > 120)) errs.push("Idade inválida.");
+            if (!data.nascimento) errs.push("Informe o nascimento");
+            if (data.nascimento !== "" && (new Date() < new Date(data.nascimento))) errs.push("Nascimento inválido.");
             if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.push("E-mail inválido.");
             if (!data.origem) errs.push("Selecione a origem.");
             if (!data.dataInicio) errs.push("Informe a data de início.");
@@ -623,13 +672,13 @@
                 id: editingId || null,
                 nome: byId("fNome").value.trim(),
                 sexo: byId("fSexo").value,
-                idade: byId("fIdade").value?.trim() || "",
+                nascimento: byId("fNascimento").value.trim(),
                 endereco: byId("fEndereco").value.trim(),
                 telefone: byId("fTelefone").value.trim(),
                 email: byId("fEmail").value.trim(),
                 origem: byId("fOrigem").value,
                 discipulador: byId("fDiscipulador").value.trim(),
-                dataInicio: parseDate(byId("fDataInicio").value)
+                dataInicio: byId("fDataInicio").value
             };
             const errs = validateForm(data);
             const box = byId("errors");
@@ -665,7 +714,7 @@
                         const toAdd = {
                             nome: p.nome || "",
                             sexo: p.sexo || "",
-                            idade: p.idade || null,
+                            nascimento: p.nascimento || null,
                             endereco: p.endereco || "",
                             telefone: p.telefone || "",
                             email: p.email || "",
@@ -687,14 +736,14 @@
         async function seed() {
             if (!confirm("Inserir dados de exemplo na sua coleção?")) return;
             const today = new Date();
-            const iso = d => new Date(d).toISOString();
+            const iso = d => new Date(d).toISOString().split('T')[0];
             const addDays = (n) => new Date(today.getTime() + n * 86400000);
             const examples = [
-                { nome: "Ana Souza", sexo: "Feminino", idade: 29, endereco: "Rua das Flores, 123 - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)) },
-                { nome: "Carlos Lima", sexo: "Masculino", idade: 35, endereco: "Av. Brasil, 450 - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)) },
-                { nome: "Beatriz Almeida", sexo: "Feminino", idade: 22, endereco: "Rua 7 de Setembro, 77 - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)) },
-                { nome: "Rafael Santos", sexo: "Masculino", idade: 41, endereco: "Av. Atlântica, 900 - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)) },
-                { nome: "João Pedro", sexo: "Masculino", idade: 19, endereco: "Rua A, 10 - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)) }
+                { nome: "Ana Souza", sexo: "Feminino", nascimento: iso(new Date(1990, 9, 25)), endereco: "Rua das Flores, 123 - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)) },
+                { nome: "Carlos Lima", sexo: "Masculino", nascimento: iso(new Date(1991, 9, 25)), endereco: "Av. Brasil, 450 - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)) },
+                { nome: "Beatriz Almeida", sexo: "Feminino", nascimento: iso(new Date(1992, 9, 25)), endereco: "Rua 7 de Setembro, 77 - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)) },
+                { nome: "Rafael Santos", sexo: "Masculino", nascimento: iso(new Date(1993, 9, 25)), endereco: "Av. Atlântica, 900 - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)) },
+                { nome: "João Pedro", sexo: "Masculino", nascimento: iso(new Date(1994, 9, 25)), endereco: "Rua A, 10 - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)) }
             ];
             for (const ex of examples) {
                 await addDoc(pessoasCollectionRef(), ex);
