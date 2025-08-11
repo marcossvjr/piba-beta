@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PIBA • Discipulados</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <style>
         :root {
             --bg1: #ffffff;
@@ -93,22 +94,22 @@
             color: var(--btnColor);
         }
 
-        .btn.primary {
-            background: var(--accent);
-            border-color: transparent;
-            color: #0a0a0a;
-            font-weight: 700
-        }
+            .btn.primary {
+                background: var(--accent);
+                border-color: transparent;
+                color: #0a0a0a;
+                font-weight: 700
+            }
 
-        .btn.warn {
-            background: rgba(239,68,68,.12);
-            border-color: #5e2323
-        }
+            .btn.warn {
+                background: rgba(239,68,68,.12);
+                border-color: #5e2323
+            }
 
-        .btn.ok {
-            background: rgba(34,197,94,.14);
-            border-color: var(--focus)
-        }
+            .btn.ok {
+                background: rgba(34,197,94,.14);
+                border-color: var(--focus)
+            }
 
         .hidden {
             display: none !important
@@ -209,8 +210,8 @@
         }
 
         .form-signup-person {
-
         }
+
             .form-signup-person .field {
                 width: 100%;
             }
@@ -420,15 +421,15 @@
         const STORAGE_KEY = "dashboard_pessoas_v1"; // apenas para compatibilidade local (não usado para persistência principal)
         const ORIGENS = [
             { text: "Primeiro contato com a igreja", selected: 'selected', disabled: 'disabled' },
-            { value: 1 , text: "Convite de um amigo(a)" },
-            { value: 2 , text: "Conversão" },
-            { value: 3 , text: "Transferência de igreja/congregação" },
-            { value: 4 , text: "Evangelismo na rua" },
-            { value: 5 , text: "Folheto" },
-            { value: 6 , text: "Mídias sociais" },
-            { value: 7 , text: "Evento/Conferência" },
-            { value: 8 , text: "Visita domiciliar" },
-            { value: 9 , text: "Projeto social" },
+            { value: 1, text: "Convite de um amigo(a)" },
+            { value: 2, text: "Conversão" },
+            { value: 3, text: "Transferência de igreja/congregação" },
+            { value: 4, text: "Evangelismo na rua" },
+            { value: 5, text: "Folheto" },
+            { value: 6, text: "Mídias sociais" },
+            { value: 7, text: "Evento/Conferência" },
+            { value: 8, text: "Visita domiciliar" },
+            { value: 9, text: "Projeto social" },
             { value: 10, text: "Culto online" },
             { value: 11, text: "Site" }
         ];
@@ -489,20 +490,20 @@
                 const wpp = whatsappLink(p.telefone);
                 const sexoTag = p.sexo === "Masculino" ? "m" : p.sexo === "Feminino" ? "f" : "o";
                 return `<tr>
-                      <td><div style="display:flex;flex-direction:column"><strong>${p.nome || ""}</strong><span class="mono">${(p.id || "").slice(0, 8)}</span></div></td>
-                      <td>${p.sexo || ""}</td>
-                      <td>${p.nascimento ?? ""}</td>
-                      <td>${p.endereco ?? ""}</td>
-                      <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">WhatsApp</a></div>` : ""}</td>
-                      <td>${p.email ?? ""}</td>
-                      <td>${p.origem ?? ""}</td>
-                      <td>${p.discipulador ?? ""}</td>
-                      <td class="nowrap">${fmtDate(p.dataInicio)}</td>
-                      <td class="nowrap">
-                        <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
-                        <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
-                      </td>
-                    </tr>`;
+                          <td><div style="display:flex;flex-direction:column"><strong>${p.nome || ""}</strong><span class="mono">${(p.id || "").slice(0, 8)}</span></div></td>
+                          <td>${p.sexo || ""}</td>
+                          <td>${p.nascimento ?? ""}</td>
+                          <td>${p.endereco ?? ""}</td>
+                          <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">WhatsApp</a></div>` : ""}</td>
+                          <td>${p.email ?? ""}</td>
+                          <td>${p.origem ?? ""}</td>
+                          <td>${p.discipulador ?? ""}</td>
+                          <td class="nowrap">${fmtDate(p.dataInicio)}</td>
+                          <td class="nowrap">
+                            <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
+                            <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
+                          </td>
+                        </tr>`;
             }).join("");
 
             updateKPIs(list);
@@ -523,7 +524,7 @@
             byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
         }
 
-        
+
 
         // path base: users/{uid}/pessoas
         function pessoasCollectionRef() {
