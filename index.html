@@ -60,6 +60,10 @@
             align-items: center;
         }
 
+        .nowrap {
+            white-space: nowrap;
+        }
+
         .brand {
             font-weight: 700;
             display: flex;
@@ -338,9 +342,9 @@
                     <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:10px">
                         <div style="grid-column:span 6"><input class="field" id="fNome" required placeholder="Nome" maxlength="50" /></div>
                         <div style="grid-column:span 2"><select class="field" id="fSexo" required><option value="" disabled selected>Sexo</option><option>Masculino</option><option>Feminino</option></select></div>
-                        <div style="grid-column:span 2"><input class="field" id="fNascimento" type="text" required placeholder="Nascimento" onfocus="this.type = 'date'; this.max = new Date().toISOString().split('T')[0]; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
+                        <div style="grid-column:span 2"><input class="field" id="fNascimento" type="text" placeholder="Nascimento" onfocus="this.type = 'date'; this.max = new Date().toISOString().split('T')[0]; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
                         <div style="grid-column:span 2">
-                            <select class="field" id="fEstadoCivil" required>
+                            <select class="field" id="fEstadoCivil">
                                 <option value="" disabled selected>Estado civil</option>
                                 <option>Casado(a)</option>
                                 <option>Solteiro(a)</option>
@@ -350,15 +354,15 @@
                                 <option>União estável</option>
                             </select>
                         </div>
-                        <div style="grid-column:span 2"><input class="field" id="fCEP" placeholder="CEP" required maxlength="9" /></div>
-                        <div style="grid-column:span 2"><input class="field" id="fEnderecoNumero" placeholder="Número" required maxlength="10" /></div>
+                        <div style="grid-column:span 2"><input class="field" id="fCEP" placeholder="CEP" maxlength="9" /></div>
+                        <div style="grid-column:span 2"><input class="field" id="fEnderecoNumero" placeholder="Número" maxlength="10" /></div>
                         <div style="grid-column:span 2"><input class="field" id="fComlemento" placeholder="Complemento" maxlength="50" /></div>
                         <div style="grid-column:span 6"><input class="field" id="fEndereco" placeholder="Endereço" readonly disabled style="color: darkgray;" /></div>
                         <div style="grid-column:span 6"><input class="field" id="fTelefone" placeholder="Telefone (DDD)9XXXXXXXX" required maxlength="11" /></div>
                         <div style="grid-column:span 6"><input class="field" id="fEmail" type="email" placeholder="E-mail" maxlength="50" /></div>
-                        <div style="grid-column:span 6"><select class="field" id="fOrigem" required></select></div>
+                        <div style="grid-column:span 6"><select class="field" id="fOrigem" ></select></div>
                         <div style="grid-column:span 6"><input class="field" id="fDiscipulador" placeholder="Discipulador" required maxlength="50" /></div>
-                        <div style="grid-column:span 6"><input class="field" id="fDataInicio" type="text" required placeholder="Início" onfocus="this.type = 'date'; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
+                        <div style="grid-column:span 6"><input class="field" id="fDataInicio" type="text" placeholder="Início" onfocus="this.type = 'date'; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
 
                         <div style="grid-column:span 6"><div class="help danger" id="errors" style="display:none; margin-top:6px"></div></div>
                     </div>
@@ -401,8 +405,11 @@
         const firebaseConfig = {
             apiKey: "AIzaSyAs8v-6HuK-iqlpOT1ktUNTLALCcDKchzY",
             authDomain: "piba-beta.firebaseapp.com",
-            projectId: "piba-beta"
-            // storageBucket, messagingSenderId, appId
+            projectId: "piba-beta",
+            storageBucket: "piba-beta.firebasestorage.app",
+            messagingSenderId: "478983483682",
+            appId: "1:478983483682:web:64b541b00ac423dcf2f57b",
+            measurementId: "G-GCJ7C7FMRN"
         };
         // ----------------------------------------------------------------
 
@@ -494,7 +501,7 @@
                           <td>${p.sexo || ""}</td>
                           <td>${p.nascimento ?? ""}</td>
                           <td>${p.endereco ?? ""}</td>
-                          <td class="nowrap">${telFmt || ""}${wpp ? `<div><a href="${wpp}" target="_blank" rel="noopener" class="help">WhatsApp</a></div>` : ""}</td>
+                          <td class="nowrap">${telFmt || ""}${wpp ? `<div style="display: inline-block;"><a href="${wpp}" target="_blank" rel="noopener" class="help"><img src="/whatsapp.svg" alt="Whatsapp" style="width: 20px; height: auto; vertical-align: bottom; margin-left: 10px;" /></a></div>` : ""}</td>
                           <td>${p.email ?? ""}</td>
                           <td>${p.origem ?? ""}</td>
                           <td>${p.discipulador ?? ""}</td>
@@ -657,13 +664,13 @@
 
         function validateForm(data) {
             const errs = [];
-            if (!data.nome || data.nome.trim().length < 2) errs.push("Informe um nome válido.");
+            if (!data.nome || data.nome.trim().length < 2 || data.nome.trim().split(' ').length < 2) errs.push("Informe um nome válido.");
             if (!data.sexo) errs.push("Selecione o sexo.");
-            if (!data.nascimento) errs.push("Informe o nascimento");
+            //if (!data.nascimento) errs.push("Informe o nascimento");
             if (data.nascimento !== "" && (new Date() < new Date(data.nascimento))) errs.push("Nascimento inválido.");
             if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.push("E-mail inválido.");
-            if (!data.origem) errs.push("Selecione a origem.");
-            if (!data.dataInicio) errs.push("Informe a data de início.");
+            //if (!data.origem) errs.push("Selecione a origem.");
+            //if (!data.dataInicio) errs.push("Informe a data de início.");
             return errs;
         }
 
@@ -841,4 +848,3 @@
     </script>
 </body>
 </html>
-
