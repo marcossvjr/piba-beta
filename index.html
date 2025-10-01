@@ -52,7 +52,7 @@
         }
 
         .wrap {
-            max-width: 1200px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 14px;
             display: flex;
@@ -233,15 +233,33 @@
             font-size: 13px
         }
 
+        .display-flex {
+            display: flex;
+        }
+
+        .w-100 {
+            width: 100%;
+            width: -webkit-fill-available;
+        }
+
+        .w-full {
+            width: 100%;
+            width: -webkit-fill-available;
+        }
+
+        .margin-0-2 {
+            margin: 0 2px;
+        }
+
         @media(max-width:800px) {
             .card {
                 grid-column: span 6
             }
+        }
 
-            @media(max-width:520px) {
-                .card {
-                    grid-column: span 12
-                }
+        @media(max-width:520px) {
+            .card {
+                grid-column: span 12
             }
         }
     </style>
@@ -267,39 +285,47 @@
 
         <div id="dashboard" class="hidden">
             <section class="toolbar" style="margin-bottom:12px">
-                <input id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone…" />
-                <select id="filterOrigem" style="min-width:220px">
-                    <option value="">Todas as origens</option>
-                </select>
-                <input id="filterDiscipulador" type="text" placeholder="Filtrar discipulador" />
-                <select id="filterSexo" style="width:160px">
-                    <option value="">Sexo (todos)</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Feminino">Feminino</option>
-                </select>
-                <button id="btnClearFilters" class="btn">Limpar filtros</button>
-                <div style="margin-left:auto; display:flex; gap:8px;">
-                    <button id="btnAdd" class="btn primary">+ Nova pessoa</button>
+                <div class="display-flex w-100">
+                    <div class="card w-full margin-0-2">
+                        <h3>Total de pessoas</h3>
+                        <div class="num" id="kpiTotal">0</div>
+                        <div class="chips" id="chipsOrigens"></div>
+                    </div>
+                    <div class="card w-full margin-0-2">
+                        <h3>Por sexo</h3>
+                        <div class="row" style="margin-top:6px">
+                            <span class="mono">Masc: <b id="kpiMasc">0</b> </span><span class="mono">Fem: <b id="kpiFem">0</b> </span>
+                        </div>
+                    </div>
+                    <div class="card w-full margin-0-2">
+                        <h3>Iniciados (últimos 30 dias)</h3>
+                        <div class="num" id="kpi30">0</div>
+                    </div>
+                    <div class="card w-full margin-0-2">
+                        <h3>Aniversariantes da semana</h3>
+                        <div class="num" id="kpinivers">0</div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <input id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone…" />
+                    <select id="filterOrigem" style="min-width:220px">
+                        <option value="">Todas as origens</option>
+                    </select>
+                    <input id="filterDiscipulador" type="text" placeholder="Filtrar discipulador" />
+                    <select id="filterSexo" style="width:160px">
+                        <option value="">Sexo (todos)</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                    <button id="btnClearFilters" class="btn">Limpar filtros</button>
+                    <div style="float: right;">
+                        <button id="btnAdd" class="btn primary">+ Nova pessoa</button>
+                    </div>
                 </div>
             </section>
 
             <section class="grid">
-                <div class="card">
-                    <h3>Total de pessoas</h3>
-                    <div class="num" id="kpiTotal">0</div>
-                    <div class="chips" id="chipsOrigens"></div>
-                </div>
-                <div class="card">
-                    <h3>Por sexo</h3>
-                    <div class="row" style="margin-top:6px">
-                        <span class="mono">Masc: <b id="kpiMasc">0</b> </span><span class="mono">Fem: <b id="kpiFem">0</b> </span>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>Iniciados (últimos 30 dias)</h3>
-                    <div class="num" id="kpi30">0</div>
-                </div>
-
                 <div class="table-card" style="grid-column:1 / -1; margin-top:12px;">
                     <div style="padding:10px 12px; display:flex; gap:8px; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.04)">
                         <div style="display:flex; gap:8px; align-items:center;">
@@ -315,14 +341,14 @@
                         <thead>
                             <tr>
                                 <th data-sort="nome" class="sortable">Nome</th>
-                                <th class="w-120">Sexo</th>
-                                <th class="w-120">Nascimento</th>
+                                <th data-sort="sexo" class="sortable w-120">Sexo</th>
+                                <th data-sort="nascimento" class="sortable w-120">Nascimento</th>
                                 <th>Endereço</th>
                                 <th class="w-160">Telefone</th>
                                 <th class="w-120">E-mail</th>
-                                <th class="w-160">Origem</th>
-                                <th class="w-160">Discipulador</th>
-                                <th class="w-160 nowrap" data-sort="dataInicio">Início</th>
+                                <th data-sort="origem" class="sortable w-160">Origem</th>
+                                <th data-sort="discipulador" class="sortable w-160">Discipulador</th>
+                                <th data-sort="dataInicio" class="sortable w-160 nowrap">Início</th>
                                 <th class="w-160">Ações</th>
                             </tr>
                         </thead>
@@ -503,7 +529,7 @@
                           <td>${p.endereco ?? ""}</td>
                           <td class="nowrap">${telFmt || ""}${wpp ? `<div style="display: inline-block;"><a href="${wpp}" target="_blank" rel="noopener" class="help"><img src="images/whatsapp.svg" alt="Whatsapp" style="width: 20px; height: auto; vertical-align: bottom; margin-left: 10px;" /></a></div>` : ""}</td>
                           <td>${p.email ?? ""}</td>
-                          <td>${p.origem ?? ""}</td>
+                          <td>${(p.origem && ORIGENS.filter(o => o.value == p.origem)[0].text) ?? ""}</td>
                           <td>${p.discipulador ?? ""}</td>
                           <td class="nowrap">${fmtDate(p.dataInicio)}</td>
                           <td class="nowrap">
@@ -529,9 +555,30 @@
             (currentList || pessoas).forEach(p => { if (!p.origem) return; counts[p.origem] = (counts[p.origem] || 0) + 1; });
             const chips = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k, v]) => `<span style="background:var(--bg2); color:var(--text); padding:6px 8px; border-radius:999px; margin-right:6px">${k}: <b>${v}</b></span>`).join("");
             byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
+            
+            var birthdaysWithinWeek = '';
+            pessoas.map(p => {
+                if (p.nascimento && (isWithinOneWeek(`${new Date().getFullYear()}-${p.nascimento.split('-')[1]}-${p.nascimento.split('-')[2]}`) || isWithinOneWeek(`${new Date().getFullYear()+1}-${p.nascimento.split('-')[1]}-${p.nascimento.split('-')[2]}`))) {
+                    birthdaysWithinWeek += `${p.nome.split(' ')[0]} ${p.nome.split(' ')[1]}: ${p.nascimento.split('-')[2]}/${p.nascimento.split('-')[1]}\n`;
+                }
+            });
+
+            byId("kpinivers").textContent = birthdaysWithinWeek;
         }
 
-
+        function isWithinOneWeek(dateString) {
+            const inputDate = new Date(dateString);
+            if (isNaN(inputDate.getTime()))
+                return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const oneWeekBefore = new Date(today);
+            oneWeekBefore.setDate(today.getDate() - 7);
+            const oneWeekAfter = new Date(today);
+            oneWeekAfter.setDate(today.getDate() + 7);
+            inputDate.setHours(0, 0, 0, 0);
+            return inputDate >= oneWeekBefore && inputDate <= oneWeekAfter;
+        }
 
         // path base: users/{uid}/pessoas
         function pessoasCollectionRef() {
@@ -557,7 +604,10 @@
                         email: data.email,
                         origem: data.origem,
                         discipulador: data.discipulador,
-                        dataInicio: data.dataInicio ? data.dataInicio : null
+                        dataInicio: data.dataInicio ? data.dataInicio : null,
+                        cep: data.cep,
+                        endereconumero: data.endereconumero,
+                        complemento: data.complemento
                     });
                 });
                 renderTable();
@@ -583,7 +633,10 @@
                         email: toAdd.email || "",
                         origem: toAdd.origem || "",
                         discipulador: toAdd.discipulador || "",
-                        dataInicio: toAdd.dataInicio || null
+                        dataInicio: toAdd.dataInicio || null,
+                        cep: toAdd.cep || "",
+                        endereconumero: toAdd.endereconumero || "",
+                        complemento: toAdd.complemento || ""
                     });
                     p.id = docRef.id;
                 } else {
@@ -598,7 +651,10 @@
                         email: p.email || "",
                         origem: p.origem || "",
                         discipulador: p.discipulador || "",
-                        dataInicio: p.dataInicio || null
+                        dataInicio: p.dataInicio || null,
+                        cep: p.cep || "",
+                        endereconumero: p.endereconumero || "",
+                        complemento: p.complemento || ""
                     }, { merge: true });
                 }
                 await loadPessoasFromFirestore();
@@ -621,7 +677,7 @@
         }
 
         /* ===== CRUD UI glue (similar ao original) ===== */
-        function openModal(edit = false) { byId("dlgTitle").textContent = edit ? "Editar pessoa" : "Nova pessoa"; byId("errors").style.display = "none"; byId("frm").reset?.(); byId("dlg").showModal(); }
+        function openModal(edit = false) { byId("dlgTitle").textContent = edit ? "Editar pessoa" : "Nova pessoa"; byId("errors").style.display = "none"; !edit && byId("frm").reset?.(); byId("dlg").showModal(); }
         function closeModal() { byId("dlg").close(); }
 
         function onCreate() {
@@ -635,6 +691,9 @@
             byId("fOrigem").value = ORIGENS[0];
             byId("fDiscipulador").value = "";
             byId("fDataInicio").value = "";
+            byId("fCEP").value = "";
+            byId("fEnderecoNumero").value = "";
+            byId("fComlemento").value = "";
             openModal(false);
         }
 
@@ -651,6 +710,9 @@
             byId("fOrigem").value = p.origem || ORIGENS[0];
             byId("fDiscipulador").value = p.discipulador || "";
             byId("fDataInicio").value = p.dataInicio || "";
+            byId("fCEP").value = p.cep || "";
+            byId("fEnderecoNumero").value = p.endereconumero || "";
+            byId("fComlemento").value = p.complemento || "";
             openModal(true);
         }
 
@@ -686,7 +748,10 @@
                 email: byId("fEmail").value.trim(),
                 origem: byId("fOrigem").value,
                 discipulador: byId("fDiscipulador").value.trim(),
-                dataInicio: byId("fDataInicio").value
+                dataInicio: byId("fDataInicio").value,
+                cep: byId("fCEP").value,
+                endereconumero: byId("fEnderecoNumero").value,
+                complemento: byId("fComlemento").value
             };
             const errs = validateForm(data);
             const box = byId("errors");
@@ -728,7 +793,10 @@
                             email: p.email || "",
                             origem: p.origem || "",
                             discipulador: p.discipulador || "",
-                            dataInicio: p.dataInicio || null
+                            dataInicio: p.dataInicio || null,
+                            cep: p.cep || "",
+                            endereconumero: p.endereconumero || "",
+                            complemento: p.complemento || ""
                         };
                         await addDoc(pessoasCollectionRef(), toAdd);
                     }
@@ -747,11 +815,11 @@
             const iso = d => new Date(d).toISOString().split('T')[0];
             const addDays = (n) => new Date(today.getTime() + n * 86400000);
             const examples = [
-                { nome: "Ana Souza", sexo: "Feminino", nascimento: iso(new Date(1990, 9, 25)), endereco: "Rua das Flores, 123 - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)) },
-                { nome: "Carlos Lima", sexo: "Masculino", nascimento: iso(new Date(1991, 9, 25)), endereco: "Av. Brasil, 450 - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)) },
-                { nome: "Beatriz Almeida", sexo: "Feminino", nascimento: iso(new Date(1992, 9, 25)), endereco: "Rua 7 de Setembro, 77 - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)) },
-                { nome: "Rafael Santos", sexo: "Masculino", nascimento: iso(new Date(1993, 9, 25)), endereco: "Av. Atlântica, 900 - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)) },
-                { nome: "João Pedro", sexo: "Masculino", nascimento: iso(new Date(1994, 9, 25)), endereco: "Rua A, 10 - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)) }
+                { nome: "Ana Souza", sexo: "Feminino", nascimento: iso(new Date(1990, 9, 25)), endereco: "Rua das Flores - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)), cep: '20540-220', endereconumero: '564', complemento: '1-302' },
+                { nome: "Carlos Lima", sexo: "Masculino", nascimento: iso(new Date(1991, 9, 25)), endereco: "Av. Brasil - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)), cep: '20541-195', endereconumero: '40', complemento: 'apto 106' },
+                { nome: "Beatriz Almeida", sexo: "Feminino", nascimento: iso(new Date(1992, 9, 25)), endereco: "Rua 7 de Setembro - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)), cep: '20540-150', endereconumero: '700', complemento: 'C 32' },
+                { nome: "Rafael Santos", sexo: "Masculino", nascimento: iso(new Date(1993, 9, 25)), endereco: "Av. Atlântica - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)), cep: '20542-010', endereconumero: '351', complemento: 'B 105' },
+                { nome: "João Pedro", sexo: "Masculino", nascimento: iso(new Date(1994, 9, 25)), endereco: "Rua A - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)), cep: '01062-450', endereconumero: '10', complemento: 'casa 2' }
             ];
             for (const ex of examples) {
                 await addDoc(pessoasCollectionRef(), ex);
