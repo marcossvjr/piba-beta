@@ -6,6 +6,8 @@
     <title>PIBA • Discipulados</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anta&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
         :root {
             --bg1: #ffffff;
             --bg2: #B3AB80;
@@ -32,7 +34,7 @@
             margin: 0;
             background: linear-gradient(180deg,var(--bg1),var(--bg3));
             color: var(--text);
-            font: 16px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+            font: 18px/1.35 "Montserrat", sans-serif;
             min-height: 100dvh;
         }
 
@@ -47,7 +49,7 @@
 
         .h1 {
             color: var(--h1Color);
-            font-size: 16px;
+            font-size: 18px;
             margin: 0;
         }
 
@@ -289,7 +291,6 @@
                     <div class="card w-full margin-0-2">
                         <h3>Total de pessoas</h3>
                         <div class="num" id="kpiTotal">0</div>
-                        <div class="chips" id="chipsOrigens"></div>
                     </div>
                     <div class="card w-full margin-0-2">
                         <h3>Por sexo</h3>
@@ -317,6 +318,9 @@
                         <option value="">Sexo (todos)</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Feminino">Feminino</option>
+                    </select>
+                    <select id="filterClasse" style="min-width:220px">
+                        <option value="">Todas as classes</option>
                     </select>
                     <button id="btnClearFilters" class="btn">Limpar filtros</button>
                     <div style="float: right;">
@@ -349,6 +353,7 @@
                                 <th data-sort="origem" class="sortable w-160">Origem</th>
                                 <th data-sort="discipulador" class="sortable w-160">Discipulador</th>
                                 <th data-sort="dataInicio" class="sortable w-160 nowrap">Início</th>
+                                <th data-sort="classe" class="sortable w-160">Classe</th>
                                 <th class="w-160">Ações</th>
                             </tr>
                         </thead>
@@ -389,6 +394,7 @@
                         <div style="grid-column:span 6"><select class="field" id="fOrigem" ></select></div>
                         <div style="grid-column:span 6"><input class="field" id="fDiscipulador" placeholder="Discipulador" required maxlength="50" /></div>
                         <div style="grid-column:span 6"><input class="field" id="fDataInicio" type="text" placeholder="Início" onfocus="this.type = 'date'; this.showPicker();" onblur="if(!this.value)this.type='text'" /></div>
+                        <div style="grid-column:span 6"><select class="field" id="fClasse" ></select></div>
 
                         <div style="grid-column:span 6"><div class="help danger" id="errors" style="display:none; margin-top:6px"></div></div>
                     </div>
@@ -467,6 +473,17 @@
             { value: 11, text: "Site" }
         ];
 
+        const CLASSES = [
+            { text: "Classe", selected: 'selected', disabled: 'disabled' },
+            { value: 1, text: "Novos membros" },
+            { value: 2, text: "Batalha espiritual" },
+            { value: 3, text: "Oração" },
+            { value: 4, text: "Aprofundamento bíblico" },
+            { value: 5, text: "Maturidade cristã" },
+            { value: 6, text: "Jovens e adolescentes" },
+            { value: 7, text: "Crianças" }
+        ];
+
         let pessoas = []; // cache local dos docs carregados
         let sort = { field: "nome", dir: "asc" };
         let editingId = null;
@@ -482,11 +499,17 @@
         const uid = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
         const compare = (a, b, f) => { const va = (a?.[f] ?? "").toString().toLowerCase(); const vb = (b?.[f] ?? "").toString().toLowerCase(); if (va < vb) return -1; if (va > vb) return 1; return 0; };
 
-        function populateOrigemSelects() {
+        function populateOrigemSelect() {
             const sel = byId("fOrigem");
             sel.innerHTML = ORIGENS.map(o => `<option value="${o.value || ''}" ${o.selected || ''} ${o.disabled || ''}>${o.text}</option>`).join("");
             const f = byId("filterOrigem");
-            f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.map(o => `<option value="${o.value}">${o.text}</option>`).join("");
+            f.innerHTML = `<option value="">Todas as origens</option>` + ORIGENS.filter(o => !o.disabled).map(o => `<option value="${o.value}">${o.text}</option>`).join("");
+        }
+        function populateClasseSelect() {
+            const sel = byId("fClasse");
+            sel.innerHTML = CLASSES.map(o => `<option value="${o.value || ''}" ${o.selected || ''} ${o.disabled || ''}>${o.text}</option>`).join("");
+            const f = byId("filterClasse");
+            f.innerHTML = `<option value="">Todas as classes</option>` + CLASSES.filter(o => !o.disabled).map(o => `<option value="${o.value}">${o.text}</option>`).join("");
         }
 
         function renderTable() {
@@ -494,6 +517,7 @@
             const q = byId("q").value.trim().toLowerCase();
             const filtroOrigem = byId("filterOrigem").value;
             const filtroDiscip = byId("filterDiscipulador").value.trim().toLowerCase();
+            const filtroClasse = byId("filterClasse").value;
             const filtroSexo = byId("filterSexo").value;
 
             let list = [...pessoas];
@@ -503,6 +527,7 @@
                 list = list.filter(p => (p.nome || "").toLowerCase().includes(q) || (p.email || "").toLowerCase().includes(q) || sanitizePhone(p.telefone).includes(qDigits));
             }
             if (filtroOrigem) list = list.filter(p => p.origem === filtroOrigem);
+            if (filtroClasse) list = list.filter(p => p.classe === filtroClasse);
             if (filtroDiscip) list = list.filter(p => (p.discipulador || "").toLowerCase().includes(filtroDiscip));
             if (filtroSexo) list = list.filter(p => p.sexo === filtroSexo);
 
@@ -532,6 +557,7 @@
                           <td>${(p.origem && ORIGENS.filter(o => o.value == p.origem)[0].text) ?? ""}</td>
                           <td>${p.discipulador ?? ""}</td>
                           <td class="nowrap">${fmtDate(p.dataInicio)}</td>
+                          <td>${(p.classe && CLASSES.filter(o => o.value == p.classe)[0].text) ?? ""}</td>
                           <td class="nowrap">
                             <button class="btn" onclick="onEdit('${p.id}')">Editar</button>
                             <button class="btn warn" onclick="onDelete('${p.id}')">Excluir</button>
@@ -554,7 +580,6 @@
             const counts = {};
             (currentList || pessoas).forEach(p => { if (!p.origem) return; counts[p.origem] = (counts[p.origem] || 0) + 1; });
             const chips = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([k, v]) => `<span style="background:var(--bg2); color:var(--text); padding:6px 8px; border-radius:999px; margin-right:6px">${k}: <b>${v}</b></span>`).join("");
-            byId("chipsOrigens").innerHTML = chips || `<span class="help">Sem dados</span>`;
             
             var birthdaysWithinWeek = '';
             pessoas.map(p => {
@@ -603,6 +628,7 @@
                         telefone: data.telefone,
                         email: data.email,
                         origem: data.origem,
+                        classe: data.classe,
                         discipulador: data.discipulador,
                         dataInicio: data.dataInicio ? data.dataInicio : null,
                         cep: data.cep,
@@ -632,6 +658,7 @@
                         telefone: toAdd.telefone || "",
                         email: toAdd.email || "",
                         origem: toAdd.origem || "",
+                        classe: toAdd.classe || "",
                         discipulador: toAdd.discipulador || "",
                         dataInicio: toAdd.dataInicio || null,
                         cep: toAdd.cep || "",
@@ -650,6 +677,7 @@
                         telefone: p.telefone || "",
                         email: p.email || "",
                         origem: p.origem || "",
+                        classe: p.classe || "",
                         discipulador: p.discipulador || "",
                         dataInicio: p.dataInicio || null,
                         cep: p.cep || "",
@@ -689,6 +717,7 @@
             byId("fTelefone").value = "";
             byId("fEmail").value = "";
             byId("fOrigem").value = ORIGENS[0];
+            byId("fClasse").value = CLASSES[0];
             byId("fDiscipulador").value = "";
             byId("fDataInicio").value = "";
             byId("fCEP").value = "";
@@ -708,6 +737,7 @@
             byId("fTelefone").value = p.telefone || "";
             byId("fEmail").value = p.email || "";
             byId("fOrigem").value = p.origem || ORIGENS[0];
+            byId("fClasse").value = p.classe || CLASSES[0];
             byId("fDiscipulador").value = p.discipulador || "";
             byId("fDataInicio").value = p.dataInicio || "";
             byId("fCEP").value = p.cep || "";
@@ -747,6 +777,7 @@
                 telefone: byId("fTelefone").value.trim(),
                 email: byId("fEmail").value.trim(),
                 origem: byId("fOrigem").value,
+                classe: byId("fClasse").value,
                 discipulador: byId("fDiscipulador").value.trim(),
                 dataInicio: byId("fDataInicio").value,
                 cep: byId("fCEP").value,
@@ -792,6 +823,7 @@
                             telefone: p.telefone || "",
                             email: p.email || "",
                             origem: p.origem || "",
+                            classe: p.classe || "",
                             discipulador: p.discipulador || "",
                             dataInicio: p.dataInicio || null,
                             cep: p.cep || "",
@@ -815,11 +847,11 @@
             const iso = d => new Date(d).toISOString().split('T')[0];
             const addDays = (n) => new Date(today.getTime() + n * 86400000);
             const examples = [
-                { nome: "Ana Souza", sexo: "Feminino", nascimento: iso(new Date(1990, 9, 25)), endereco: "Rua das Flores - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)), cep: '20540-220', endereconumero: '564', complemento: '1-302' },
-                { nome: "Carlos Lima", sexo: "Masculino", nascimento: iso(new Date(1991, 9, 25)), endereco: "Av. Brasil - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)), cep: '20541-195', endereconumero: '40', complemento: 'apto 106' },
-                { nome: "Beatriz Almeida", sexo: "Feminino", nascimento: iso(new Date(1992, 9, 25)), endereco: "Rua 7 de Setembro - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)), cep: '20540-150', endereconumero: '700', complemento: 'C 32' },
-                { nome: "Rafael Santos", sexo: "Masculino", nascimento: iso(new Date(1993, 9, 25)), endereco: "Av. Atlântica - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)), cep: '20542-010', endereconumero: '351', complemento: 'B 105' },
-                { nome: "João Pedro", sexo: "Masculino", nascimento: iso(new Date(1994, 9, 25)), endereco: "Rua A - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)), cep: '01062-450', endereconumero: '10', complemento: 'casa 2' }
+                { nome: "Ana Souza", sexo: "Feminino", nascimento: iso(new Date(1990, 9, 25)), endereco: "Rua das Flores - Curitiba", telefone: "(41) 99876-1234", email: "ana.souza@email.com", origem: "Mídias sociais", discipulador: "Priscila", dataInicio: iso(addDays(-3)), cep: '20540-220', endereconumero: '564', complemento: '1-302', classe: 'Novos membros' },
+                { nome: "Carlos Lima", sexo: "Masculino", nascimento: iso(new Date(1991, 9, 25)), endereco: "Av. Brasil - São Paulo", telefone: "(11) 91234-5678", email: "carlos.lima@email.com", origem: "Indicação de amigo(a)", discipulador: "João", dataInicio: iso(addDays(-15)), cep: '20541-195', endereconumero: '40', complemento: 'apto 106', classe: 'Batalha espiritual' },
+                { nome: "Beatriz Almeida", sexo: "Feminino", nascimento: iso(new Date(1992, 9, 25)), endereco: "Rua 7 de Setembro - Porto Alegre", telefone: "(51) 99111-2233", email: "", origem: "Evento/Conferência", discipulador: "Marina", dataInicio: iso(addDays(-40)), cep: '20540-150', endereconumero: '700', complemento: 'C 32', classe: 'Crianças' },
+                { nome: "Rafael Santos", sexo: "Masculino", nascimento: iso(new Date(1993, 9, 25)), endereco: "Av. Atlântica - Rio de Janeiro", telefone: "(21) 98888-0000", email: "rafa.santos@email.com", origem: "Conversão", discipulador: "Pedro", dataInicio: iso(addDays(-1)), cep: '20542-010', endereconumero: '351', complemento: 'B 105', classe: 'Jovens e adolescentes' },
+                { nome: "João Pedro", sexo: "Masculino", nascimento: iso(new Date(1994, 9, 25)), endereco: "Rua A - Recife", telefone: "(81) 98765-4321", email: "", origem: "Projeto social", discipulador: "Lucas", dataInicio: iso(addDays(-5)), cep: '01062-450', endereconumero: '10', complemento: 'casa 2', classe: 'Maturidade cristã' }
             ];
             for (const ex of examples) {
                 await addDoc(pessoasCollectionRef(), ex);
@@ -852,9 +884,17 @@
 
             byId("q").addEventListener("input", renderTable);
             byId("filterOrigem").addEventListener("change", renderTable);
+            byId("filterClasse").addEventListener("change", renderTable);
             byId("filterDiscipulador").addEventListener("input", renderTable);
             byId("filterSexo").addEventListener("change", renderTable);
-            byId("btnClearFilters").addEventListener("click", () => { byId("q").value = ""; byId("filterOrigem").value = ""; byId("filterDiscipulador").value = ""; byId("filterSexo").value = ""; renderTable(); });
+            byId("btnClearFilters").addEventListener("click", () => {
+                byId("q").value = "";
+                byId("filterOrigem").value = "";
+                byId("filterClasse").value = "";
+                byId("filterDiscipulador").value = "";
+                byId("filterSexo").value = "";
+                renderTable();
+            });
 
             byId("btnExport").addEventListener("click", exportJSON);
             byId("btnImport").addEventListener("click", () => importJSON(byId("importFile").files?.[0]));
@@ -893,7 +933,8 @@
                     btnSignIn.style.display = "none"; btnSignOut.style.display = "inline-block";
                     notAuth.style.display = "none"; dashboard.classList.remove("hidden");
                     userBasePath = `users/${user.uid}/pessoas`;
-                    populateOrigemSelects();
+                    populateOrigemSelect();
+                    populateClasseSelect();
                     await loadPessoasFromFirestore();
                 }
             } else {
@@ -906,7 +947,8 @@
 
         // boot
         (function init() {
-            populateOrigemSelects();
+            populateOrigemSelect();
+            populateClasseSelect();
             attachEvents();
         })();
 
